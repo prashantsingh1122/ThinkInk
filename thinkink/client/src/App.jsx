@@ -20,8 +20,6 @@ function App() {
       </nav>
 
 
-
-
       {/* ------ Main Content ------ */}
       <div className="max-w-4xl mx-auto py-10 px-4">
         <h2 className="text-3xl font-semibold text-center">Welcome to ThinkInk</h2>
