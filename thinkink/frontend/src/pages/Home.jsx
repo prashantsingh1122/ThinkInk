@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
-  const [blogs, setBlogs] = useState([]);
-
-  useEffect(() => {
-    console.log("Fetch blogs from backend here");
-  }, []);
-
   return (
-    <div className="p-10">
-      <h1 className="text-3xl font-bold">All Blogs</h1>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {blogs.map((blog) => (
-          <div key={blog.id} className="p-4 border rounded-lg shadow">
-            <h2 className="text-xl font-semibold">{blog.title}</h2>
-            <p>{blog.content.slice(0, 100)}...</p>
-          </div>
-        ))}
+    <div className="h-screen flex flex-col items-center justify-center bg-gray-100 text-center p-6">
+      <h1 className="text-4xl font-bold text-gray-800 mb-6">Welcome to My Blog</h1>
+      <p className="text-lg text-gray-600 mb-6">Share your thoughts, explore ideas, and connect with others.</p>
+
+      <div className="flex space-x-4">
+        <Link to="/login">
+          <button className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition">
+            Login
+          </button>
+        </Link>
+        <Link to="/signup">
+          <button className="px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition">
+            Sign Up
+          </button>
+        </Link>
       </div>
     </div>
   );

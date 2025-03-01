@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -8,19 +9,26 @@ export default function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("Signup:", { email, password });
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/signup", { email, password });
+      console.log("Signup successful:", res.data);
+      navigate("/login"); // Redirect to login after successful signup
+    } catch (error) {
+      console.error("Signup error:", error.response?.data || error.message);
+    }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <form className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold mb-4">Sign Up</h2>
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <form className="bg-white p-6 rounded-lg shadow-lg w-96" onSubmit={handleSignup}>
+        <h2 className="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
         <input
           type="email"
           placeholder="Email"
           className="w-full p-2 border rounded mb-3"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
@@ -28,8 +36,9 @@ export default function Signup() {
           className="w-full p-2 border rounded mb-3"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <button className="w-full bg-blue-500 text-white p-2 rounded" type="submit" onClick={handleSignup}>
+        <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600 transition" type="submit">
           Sign Up
         </button>
       </form>
