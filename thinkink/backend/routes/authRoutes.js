@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js"; // Ensure correct path
+import User from "../models/userModel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -10,22 +10,21 @@ const router = express.Router();
 // ✅ Signup Route
 router.post("/signup", async (req, res) => {
   try {
-    console.log("🔹 Signup request received:", req.body); // Debug log
+    console.log("🔹 Signup request received:", req.body);
 
     const { name, email, password } = req.body;
 
-    // ✅ Check if user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log("❌ User already exists");
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // ✅ Hash Password
+    // Hash Password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // ✅ Create New User
+    // Create User
     const newUser = new User({
       name,
       email,
@@ -35,8 +34,10 @@ router.post("/signup", async (req, res) => {
     await newUser.save();
     console.log("✅ User created successfully:", newUser);
 
-    // ✅ Generate JWT Token
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    // Generate JWT Token
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.status(201).json({ token, user: newUser });
   } catch (error) {

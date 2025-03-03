@@ -1,47 +1,43 @@
 import { useState } from "react";
+import { signup } from "../services/api";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
-export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Signup = () => {
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSignup = async (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", { email, password });
-      console.log("Signup successful:", res.data);
-      navigate("/login"); // Redirect to login after successful signup
-    } catch (error) {
-      console.error("Signup error:", error.response?.data || error.message);
+    setError("");
+
+    const res = await signup(formData);
+    if (res.error) {
+      setError(res.error);
+    } else {
+      localStorage.setItem("token", res.token);
+      navigate("/dashboard");
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form className="bg-white p-6 rounded-lg shadow-lg w-96" onSubmit={handleSignup}>
-        <h2 className="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-2 border rounded mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-2 border rounded mb-3"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600 transition" type="submit">
-          Sign Up
-        </button>
-      </form>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="p-6 bg-white rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-semibold text-center mb-4">Signup</h2>
+        {error && <p className="text-red-500">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <input type="text" name="name" placeholder="Name" onChange={handleChange} className="w-full p-2 mb-2 border rounded"/>
+          <input type="email" name="email" placeholder="Email" onChange={handleChange} className="w-full p-2 mb-2 border rounded"/>
+          <input type="password" name="password" placeholder="Password" onChange={handleChange} className="w-full p-2 mb-2 border rounded"/>
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Signup</button>
+        </form>
+      </div>
     </div>
   );
-}
+};
+
+export default Signup;
