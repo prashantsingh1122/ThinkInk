@@ -3,7 +3,12 @@ import { signup } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({
+    username: "", // ✅ Ensure username is included
+    email: "",
+    password: "",
+  });
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -30,10 +35,33 @@ const Signup = () => {
         <h2 className="text-2xl font-semibold text-center mb-4">Signup</h2>
         {error && <p className="text-red-500">{error}</p>}
         <form onSubmit={handleSubmit}>
-          <input type="text" name="name" placeholder="Name" onChange={handleChange} className="w-full p-2 mb-2 border rounded"/>
-          <input type="email" name="email" placeholder="Email" onChange={handleChange} className="w-full p-2 mb-2 border rounded"/>
-          <input type="password" name="password" placeholder="Password" onChange={handleChange} className="w-full p-2 mb-2 border rounded"/>
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Signup</button>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={handleChange}
+            className="w-full p-2 mb-2 border rounded"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            className="w-full p-2 mb-2 border rounded"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            className="w-full p-2 mb-2 border rounded"
+            required
+          />
+          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+            Signup
+          </button>
         </form>
       </div>
     </div>

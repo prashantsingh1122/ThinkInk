@@ -1,48 +1,45 @@
 import express from "express";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/userModel.js";
-import dotenv from "dotenv";
+import User from "../models/UserModel.js";
 
-dotenv.config();
 const router = express.Router();
 
-// ✅ Signup Route
+// Signup Route
 router.post("/signup", async (req, res) => {
   try {
-    console.log("🔹 Signup request received:", req.body);
+    console.log("🔹 Signup request received:", req.body); // Debugging log
 
-    const { name, email, password } = req.body;
+    // Extract data properly
+    const { username, email, password } = req.body;
+
+    // Check if required fields are present
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ error: "User already exists." });
     }
 
-    // Hash Password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create User
+    // Create new user
     const newUser = new User({
-      name,
+      username,
       email,
       password: hashedPassword,
     });
 
+    // Save user to database
     await newUser.save();
-    console.log("✅ User created successfully:", newUser);
 
-    // Generate JWT Token
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    res.status(201).json({ token, user: newUser });
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("❌ Signup Error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
