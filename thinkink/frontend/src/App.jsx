@@ -3,6 +3,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Blog from "./pages/Blog";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
@@ -12,6 +14,11 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/blog/:id" element={<Blog />} />
+
+        {/*  Protected Routes*/}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard/>} />
+        </Route>
       </Routes>
     </Router>
   );
