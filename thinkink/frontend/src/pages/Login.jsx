@@ -1,41 +1,61 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { login } from "../services/api"; // Importing login function from api.js
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle login submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token); // Store token
-      navigate("/"); // Redirect to home after login
+      const res = await login(formData);
+
+      if (res.error) {
+        setError(res.error);
+      } else {
+        console.log("✅ Login Success:", res);
+
+        // Store token and redirect
+        localStorage.setItem("token", res.token);
+        navigate("/dashboard");
+      }
     } catch (error) {
-      console.error("Login error:", error.response?.data || error.message);
+      console.error("❌ Login Error:", error);
+      setError("Something went wrong. Please try again.");
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form className="bg-white p-6 rounded-lg shadow-lg w-96" onSubmit={handleLogin}>
+      <form className="bg-white p-6 rounded-lg shadow-lg w-96" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <input
           type="email"
+          name="email"
           placeholder="Email"
           className="w-full p-2 border rounded mb-3"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
           required
         />
         <input
           type="password"
+          name="password"
           placeholder="Password"
           className="w-full p-2 border rounded mb-3"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={handleChange}
           required
         />
         <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition" type="submit">
