@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Home() {
 
-  let counter = 10;
+  let [counter,setcounter] = useState(10);
   const Advalue = () => {
-    console.log("Clicked", counter);
-    counter = counter + 1;
+    setcounter(counter + 1);
   };
   const removeValue = () => {
-    console.log("clicked", counter);
-    counter = counter - 1;
+    setcounter(counter - 1);
   }
 
     return (
@@ -32,12 +31,14 @@ export default function Home() {
         </div>
         <h3>Counter Value is {counter}</h3>
         <button className="bg-yellow-500 text-black p-2 rounded-lg hover:bg-yellow-100"
-          onClick={Advalue}>Click to Add </button>
+          onClick={Advalue}>Click to Add  {counter} </button>
         <br />
+        <p>{counter}</p>
         <button className="bg-red-500 text-black p-2 rounded-lg hover:bg-red-100"
           onClick={removeValue}
-        >Removeby1</button>
+        >Remove {counter}</button>
       </div>
+
 
     );
   }
