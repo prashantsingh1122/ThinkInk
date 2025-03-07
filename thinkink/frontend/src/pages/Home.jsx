@@ -5,9 +5,11 @@ export default function Home() {
 
   let [counter,setcounter] = useState(10);
   const Advalue = () => {
+
     setcounter(counter + 1);
   };
   const removeValue = () => {
+    if (counter > 0)
     setcounter(counter - 1);
   }
 
@@ -34,7 +36,7 @@ export default function Home() {
           onClick={Advalue}>Click to Add  {counter} </button>
         <br />
         <p>{counter}</p>
-        <button className="bg-red-500 text-black p-2 rounded-lg hover:bg-red-100"
+        <button className="bg-amber-950 text-black p-2 rounded-lg hover:bg-red-100"
           onClick={removeValue}
         >Remove {counter}</button>
       </div>
