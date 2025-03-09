@@ -7,6 +7,8 @@ export default function Blog() {
     <div className="p-10">
       <h1 className="text-3xl font-bold">Blog ID: {id}</h1>
       <p>Fetch and display blog content here...</p>
+      <h1 className="text-3xl font-bold">Comments</h1>
+      <p>Fetch and display comments here...</p>
     </div>
   );
 }
