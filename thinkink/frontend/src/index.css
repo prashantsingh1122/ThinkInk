@@ -2,3 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+nav {
+    @apply bg-white shadow-md p-4 flex justify-between items-center;
+  }
+  
+  nav a {
+    @apply text-gray-800 hover:text-blue-600;
+  }
+  
+  nav img {
+    @apply w-10 h-10 rounded-full;
+  }

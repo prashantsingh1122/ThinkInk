@@ -5,10 +5,12 @@ import Signup from "./pages/Signup";
 import Blog from "./pages/Blog";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import Navbar from "./pages/Navbar";
 
 export default function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home/>} /> {/* Home Page should load first */}
         <Route path="/login" element={<Login />} />
