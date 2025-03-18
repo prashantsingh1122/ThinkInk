@@ -19,4 +19,7 @@ router.put("/:id", protect, updatePost);
 // Delete a post (Protected)
 router.delete("/:id", protect, deletePost);
 
+router.post("/", protect, upload.single("image"), createPost);
+
+
 export default router;
