@@ -1,6 +1,7 @@
 import express from "express";
 import { createPost, getPosts, getPost, updatePost, deletePost } from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js"; // Auth middleware to protect routes
+import upload from "../middleware/uploadMiddleware.js"; // Multer middleware for file uploads   
 
 const router = express.Router();
 

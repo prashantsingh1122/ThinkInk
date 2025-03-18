@@ -24,5 +24,6 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", UserSchema);
+// Prevent multiple model compilation
+const User = mongoose.models.User || mongoose.model("User", UserSchema); // Corrected this line
 export default User;
