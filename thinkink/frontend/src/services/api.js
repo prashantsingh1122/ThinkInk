@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL =  import.meta.env.VITE_API_URL ||"http://localhost:5000/api/auth";
-
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/posts"; // Corrected URL
 // ✅ Signup function
 export const signup = async (userData) => {
   try {
@@ -27,15 +26,22 @@ export const login = async (userData) => {
 };
 
 // ✅Create a new blog post
-export const createPost = async (postData) => {
-  const token = localStorage.getItem("token"); // Retrieve token for authorization
-  const config = {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  };
-
-  const response = await axios.post(`${API_URL}/posts`, postData, config);
-  return response.data;
+// Create Post
+export const createPost = async (postData, token) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/`, // Ensure this matches your backend route
+      postData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Ensure you're sending token for protected routes
+          "Content-Type": "multipart/form-data", // Important for file uploads
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating post: ", error);
+    throw error;
+  }
 };

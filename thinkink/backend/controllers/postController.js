@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import multer from "multer";
+import path from "path";  
 
 // ✅ Create a new post
 export const createPost = async (req, res) => {
@@ -79,6 +80,10 @@ export const updatePost = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+// Multer configuration
+const storage = multer.memoryStorage(); // Store image in memory temporarily
+export const upload = multer({ storage });
+
 
 // ✅ Delete a post
 export const deletePost = async (req, res) => {
@@ -100,8 +105,5 @@ export const deletePost = async (req, res) => {
     console.error("Delete Post Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+  
 };
-
-// Multer configuration
-const storage = multer.memoryStorage(); // Store image in memory temporarily
-export const upload = multer({ storage });

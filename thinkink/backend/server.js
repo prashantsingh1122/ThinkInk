@@ -11,7 +11,10 @@ connectDB();
 
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
-app.use(cors()); // ✅ Enable CORS
+app.use(cors({
+  origin: "http://localhost:5173", // Your frontend URL
+  credentials: true
+})); // ✅ Enable CORS
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes); // Make sure this is correct
