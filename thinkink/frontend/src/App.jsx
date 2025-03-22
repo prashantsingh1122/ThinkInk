@@ -5,7 +5,7 @@ import Signup from "./pages/Signup";
 import Blog from "./pages/Blog";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoutes";
-import Navbar from "./pages/Navbar";
+import Navbar from "./components/Navbar";
 import CreatePost from "./components/CreatePost";
 
 export default function App() {

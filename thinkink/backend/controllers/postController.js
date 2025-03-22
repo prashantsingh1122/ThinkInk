@@ -1,21 +1,25 @@
 import Post from "../models/Post.js";
 import multer from "multer";
-import path from "path";  
+import { uploadImageToCloudinary } from "../utils/cloudinary.js"; // Import Cloudinary helper
 
-// ✅ Create a new post
 export const createPost = async (req, res) => {
   try {
-    const { title, content, image } = req.body;
-    const userId = req.user.id; // Extracted from auth middleware
+    const { title, content } = req.body;
+    const userId = req.user.id; // Extract from auth middleware
 
     if (!title || !content) {
       return res.status(400).json({ error: "Title and content are required" });
     }
 
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = await uploadImageToCloudinary(req.file.buffer); // Upload image to Cloudinary
+    }
+
     const newPost = new Post({
       title,
       content,
-      image,
+      image: imageUrl,
       author: userId,
     });
 
@@ -26,6 +30,7 @@ export const createPost = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 // ✅ Get all posts
 export const getPosts = async (req, res) => {

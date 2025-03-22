@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createPost } from "../services/api"; // API function for post creation
+import { createPost } from "../services/api";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  
   const navigate = useNavigate();
+  const userToken = localStorage.getItem("token"); // ✅ Retrieve token
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -29,9 +30,9 @@ const CreatePost = () => {
 
     setLoading(true);
     try {
-      await createPost(formData);
+      await createPost(formData, userToken); // ✅ Ensure token is passed
       alert("Post created successfully!");
-      navigate("/"); // Redirect to homepage after creation
+      navigate("/");
     } catch (error) {
       console.error("Error creating post:", error);
       alert("Failed to create post.");
