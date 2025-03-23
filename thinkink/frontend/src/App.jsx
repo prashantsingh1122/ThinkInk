@@ -7,9 +7,11 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import Navbar from "./components/Navbar";
 import CreatePost from "./components/CreatePost";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   return (
+    <AuthProvider>   {/* ✅ Wrap everything with AuthProvider */}
     <Router>
       <Navbar />
       <Routes>
@@ -25,5 +27,6 @@ export default function App() {
         </Route>
       </Routes>
     </Router>
+    </AuthProvider>  
   );
 }

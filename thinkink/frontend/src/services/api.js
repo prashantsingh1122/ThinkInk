@@ -33,7 +33,7 @@ export const createPost = async (postData) => {
     if (!token) throw new Error("No auth token found, please login again.");
 
     const response = await axios.post(
-      `${API_BASE_URL}/`, // Ensure correct API endpoint
+      "http://localhost:5000/api/posts", // Ensure correct API endpoint
       postData,
       {
         headers: {

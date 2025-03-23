@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPost } from "../services/api";
+import AuthContext from "../context/AuthContext"; // ✅ Correct import
 
 const CreatePost = () => {
+  const { user } = useContext(AuthContext); // ✅ Now this won't be undefined
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  
   const navigate = useNavigate();
-  const userToken = localStorage.getItem("token"); // ✅ Retrieve token
+
+  if (!user) {
+    return <h2 className="text-center mt-10">LOGIN KARO JAAKE BEEECH</h2>;
+  }
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
@@ -17,7 +21,6 @@ const CreatePost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!title || !content) {
       alert("Title and content are required.");
       return;
@@ -30,7 +33,7 @@ const CreatePost = () => {
 
     setLoading(true);
     try {
-      await createPost(formData, userToken); // ✅ Ensure token is passed
+      await createPost(formData, user.token);
       alert("Post created successfully!");
       navigate("/");
     } catch (error) {
@@ -45,7 +48,7 @@ const CreatePost = () => {
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="mb-4">
           <label className="block text-sm font-medium">Title</label>
           <input
