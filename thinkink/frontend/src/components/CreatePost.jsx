@@ -1,23 +1,27 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPost } from "../services/api";
-import AuthContext from "../context/AuthContext"; // ✅ Correct import
+import AuthContext from "../context/AuthContext";
 
 const CreatePost = () => {
-  const { user } = useContext(AuthContext); // ✅ Now this won't be undefined
+  const { user, token } = useContext(AuthContext);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
 
-  if (!user) {
-    return <h2 className="text-center mt-10">LOGIN KARO JAAKE BEEECH</h2>;
-  }
+  console.log("📝 Rendering CreatePost Page -> User:", user, "Token:", token);
 
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-  };
+  useEffect(() => {
+    if (!user || !token) {
+      console.log("❌ No user/token, redirecting to login...");
+      navigate("/login");
+    }
+  }, [user, token, navigate]);
+
+  const handleImageChange = (e) => setImage(e.target.files[0]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +37,7 @@ const CreatePost = () => {
 
     setLoading(true);
     try {
-      await createPost(formData, user.token);
+      await createPost(formData, token);
       alert("Post created successfully!");
       navigate("/");
     } catch (error) {
@@ -44,11 +48,12 @@ const CreatePost = () => {
     }
   };
 
+  if (!user) return <p>Loading user data...</p>; // Prevents empty page
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-2xl font-bold mb-4">Create New Post</h1>
-
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-sm font-medium">Title</label>
           <input
@@ -59,7 +64,6 @@ const CreatePost = () => {
             required
           />
         </div>
-
         <div className="mb-4">
           <label className="block text-sm font-medium">Content</label>
           <textarea
@@ -70,7 +74,6 @@ const CreatePost = () => {
             required
           />
         </div>
-
         <div className="mb-4">
           <label className="block text-sm font-medium">Image (Optional)</label>
           <input
@@ -80,7 +83,6 @@ const CreatePost = () => {
             onChange={handleImageChange}
           />
         </div>
-
         <button
           type="submit"
           className={`w-full p-2 bg-blue-500 text-white rounded ${loading && "opacity-70 cursor-not-allowed"}`}

@@ -1,11 +1,24 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 const ProtectedRoute = () => {
-  const token = localStorage.getItem("token"); // Check if user is logged in
-  
-  //redirect to login page if user is not logged in
+  const { user, token } = useContext(AuthContext);
 
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  console.log("🔒 Checking ProtectedRoute -> User:", user, "Token:", token);
+
+  if (!token) {
+    console.log("❌ No Token Found, Redirecting to Login...");
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user) {
+    console.log("⏳ User data still loading...");
+    return <p>Loading...</p>; // Prevents blank screen while fetching user
+  }
+
+  console.log("✅ User is authenticated, rendering protected page.");
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
