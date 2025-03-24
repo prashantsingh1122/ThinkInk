@@ -7,18 +7,12 @@ const ProtectedRoute = () => {
 
   console.log("🔒 Checking ProtectedRoute -> User:", user, "Token:", token);
 
-  if (!token) {
-    console.log("❌ No Token Found, Redirecting to Login...");
-    return <Navigate to="/login" replace />;
+  // ✅ Fix: Don't redirect until we are sure user is null
+  if (token === null) {
+    return null; // Wait until we know user state
   }
 
-  if (!user) {
-    console.log("⏳ User data still loading...");
-    return <p>Loading...</p>; // Prevents blank screen while fetching user
-  }
-
-  console.log("✅ User is authenticated, rendering protected page.");
-  return <Outlet />;
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;

@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 nav {
-    @apply bg-white shadow-md p-4 flex justify-between items-center;
+    @apply bg-cyan-300 shadow-md p-4 flex justify-between items-center;
   }
   
   nav a {
-    @apply text-gray-800 hover:text-blue-600;
+    @apply text-gray-800 hover:text-red-600;
   }
   
   nav img {
