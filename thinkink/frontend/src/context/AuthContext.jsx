@@ -6,49 +6,44 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
+  // ✅ Fetch user data when token is set
   useEffect(() => {
-    console.log("🔄 useEffect triggered, Token:", token);
     if (token) {
-      localStorage.setItem("token", token); // Ensure token is always saved
-      fetchUserData(token);
+      fetchUserData();
     }
-  }, [token]);  // ✅ Trigger fetch when token updates
+  }, [token]);
 
-  const fetchUserData = async (token) => {
+  // ✅ Function to fetch user data
+  const fetchUserData = async () => {
     try {
-      console.log("📡 Fetching user data...");
       const response = await fetch("http://localhost:5000/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("✅ User Data:", data);
-        setUser(data);
-        localStorage.setItem("user", JSON.stringify(data));
+        setUser(data); // ✅ Store user details in state
       } else {
-        console.log("❌ Invalid token, logging out...");
-        logoutUser();
+        logoutUser(); // If token is invalid, log out the user
       }
     } catch (error) {
-      console.error("🚨 Auth Error:", error);
+      console.error("Auth Error:", error);
       logoutUser();
     }
   };
 
-  const loginUser = (token) => {
-    console.log("🔑 Storing Token:", token);
-    setToken(token);
-    localStorage.setItem("token", token);
-    fetchUserData(token);  // ✅ Immediately fetch user data
+  // ✅ Login function updates both token & user
+  const loginUser = (newToken) => {
+    setToken(newToken);
+    localStorage.setItem("token", newToken);
+    fetchUserData(); // Fetch user details after setting token
   };
 
+  // ✅ Logout function clears everything
   const logoutUser = () => {
-    console.log("🚪 Logging out...");
     setUser(null);
     setToken(null);
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
   };
 
   return (

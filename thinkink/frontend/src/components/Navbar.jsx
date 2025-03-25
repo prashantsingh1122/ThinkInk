@@ -8,7 +8,7 @@ const Navbar = () => {
     const token = localStorage.getItem("token");
     if (token) {
       // Fetch user details from API (optional)
-      setUser({ name: "John Doe" }); // Replace with actual API call
+      setUser({ name: "CVAM " }); // Replace with actual API call
     }
   }, []);
 
@@ -26,7 +26,7 @@ const Navbar = () => {
             />
           </Link>
         ) : (
-          <Link to="/login" className="text-gray-800 hover:text-blue-600">Login</Link>
+          <Link to="/login" className="text-gray-800 hover:text-blue-600"> Login</Link>
         )}
       </div>
     </nav>

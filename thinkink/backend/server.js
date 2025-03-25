@@ -20,6 +20,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes); // Make sure this is correct
 app.use("/api/posts",postRoutes); // Make sure this is correct  
 
+
 // ✅ Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)

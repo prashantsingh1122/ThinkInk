@@ -2,8 +2,24 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
+import { protect } from "../middleware/authMiddleware.js"; // ✅ Correct import
+
 
 const router = express.Router();
+
+// ✅ Add the /me route
+router.get("/me", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password"); // Exclude password
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 // 🔹 Signup Route
 router.post("/signup", async (req, res) => {

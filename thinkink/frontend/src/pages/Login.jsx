@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../services/api"; // Importing login function from api.js
 import AuthContext from "../context/AuthContext";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const { loginUser, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Handle input changes
@@ -19,22 +19,31 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await login(formData);
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-      if (res.error) {
-        setError(res.error);
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("✅ Login Success:", data);
+        loginUser(data.token); // ✅ Set token & fetch user details
       } else {
-        console.log("✅ Login Success:", res);
-
-        // Store token and redirect
-        localStorage.setItem("token", res.token);
-        navigate("/dashboard");
+        setError(data.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("❌ Login Error:", error);
       setError("Something went wrong. Please try again.");
     }
   };
+
+  // ✅ Navigate AFTER user is set
+  if (user) {
+    console.log("✅ Redirecting to Dashboard...");
+    navigate("/dashboard");
+  }
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
