@@ -1,11 +1,10 @@
 import Post from "../models/Post.js";
-import multer from "multer";
-import { uploadImageToCloudinary } from "../utils/cloudinary.js"; // Import Cloudinary helper
+import { uploadImageToCloudinary } from "../utils/cloudinary.js";
 
 export const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
-    const userId = req.user.id; // Extract from auth middleware
+    const userId = req.user.id;
 
     if (!title || !content) {
       return res.status(400).json({ error: "Title and content are required" });
@@ -13,7 +12,7 @@ export const createPost = async (req, res) => {
 
     let imageUrl = null;
     if (req.file) {
-      imageUrl = await uploadImageToCloudinary(req.file.buffer); // Upload image to Cloudinary
+      imageUrl = await uploadImageToCloudinary(req.file.path); // Fix image path
     }
 
     const newPost = new Post({
@@ -26,10 +25,11 @@ export const createPost = async (req, res) => {
     await newPost.save();
     res.status(201).json(newPost);
   } catch (error) {
-    console.error("Create Post Error:", error);
+    console.error("🚨 Create Post Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 // ✅ Get all posts
@@ -85,9 +85,7 @@ export const updatePost = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-// Multer configuration
-const storage = multer.memoryStorage(); // Store image in memory temporarily
-export const upload = multer({ storage });
+
 
 
 // ✅ Delete a post

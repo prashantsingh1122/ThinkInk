@@ -1,12 +1,18 @@
 import express from "express";
-import { createPost, getPosts, getPost, updatePost, deletePost } from "../controllers/postController.js";
-import { protect } from "../middleware/authMiddleware.js"; // Auth middleware to protect routes
-import upload from "../middleware/uploadMiddleware.js"; // Multer middleware for file uploads   
+import {
+  createPost,
+  getPosts,
+  getPost,
+  updatePost,
+  deletePost,
+} from "../controllers/postController.js";
+import { protect } from "../middleware/authMiddleware.js";
+import upload from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
 // Create a new post (Protected)
-router.post("/", protect, createPost);
+router.post("/", protect, upload.single("image"), createPost);
 
 // Get all posts
 router.get("/", getPosts);
@@ -19,8 +25,5 @@ router.put("/:id", protect, updatePost);
 
 // Delete a post (Protected)
 router.delete("/:id", protect, deletePost);
-
-router.post("/", protect, upload.single("image"), createPost);
-
 
 export default router;

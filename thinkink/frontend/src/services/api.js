@@ -29,22 +29,29 @@ export const login = async (userData) => {
 // ✅ Create a new blog post
 export const createPost = async (postData) => {
   try {
-    const token = localStorage.getItem("token"); // Get token from localStorage
+    const token = localStorage.getItem("token");
     if (!token) throw new Error("No auth token found, please login again.");
 
+    const formData = new FormData();
+    formData.append("title", postData.title);
+    formData.append("content", postData.content);
+    if (postData.image) {
+      formData.append("image", postData.image); // Attach image if present
+    }
+
     const response = await axios.post(
-      "http://localhost:5000/api/posts", // Ensure correct API endpoint
-      postData,
+      "http://localhost:5000/api/posts",
+      formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // Include token
-          "Content-Type": "multipart/form-data", // For image uploads
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       }
     );
     return response.data;
   } catch (error) {
-    console.error("Error creating post:", error);
+    console.error("🚨 Error creating post:", error);
     throw error;
   }
 };

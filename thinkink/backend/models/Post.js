@@ -8,17 +8,18 @@ const PostSchema = new mongoose.Schema(
       trim: true,
     },
     content: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,   // ✅ Ensure the content field is of type String
       ref: "user",
       required: true,
     },
     author: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,   // ✅ Reference to the User model
       ref: "user",
       required: true,
     },
     image: {
       type: String,
+      default: null, // ✅ Default to null if no image is provided
     },
   },
   { timestamps: true }
