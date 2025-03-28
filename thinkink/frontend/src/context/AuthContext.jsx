@@ -6,44 +6,40 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // ✅ Fetch user data when token is set
   useEffect(() => {
-    if (token) {
-      fetchUserData();
-    }
+    const fetchUserData = async () => {
+      if (!token) return;
+
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+          console.error("🚨 Failed to fetch user:", res.status);
+          setUser(null);
+          return;
+        }
+
+        const userData = await res.json();
+        setUser(userData);
+      } catch (error) {
+        console.error("❌ Error fetching user:", error);
+      }
+    };
+
+    fetchUserData();
   }, [token]);
 
-  // ✅ Function to fetch user data
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data); // ✅ Store user details in state
-      } else {
-        logoutUser(); // If token is invalid, log out the user
-      }
-    } catch (error) {
-      console.error("Auth Error:", error);
-      logoutUser();
-    }
+  const loginUser = (token) => {
+    localStorage.setItem("token", token);
+    setToken(token);
   };
 
-  // ✅ Login function updates both token & user
-  const loginUser = (newToken) => {
-    setToken(newToken);
-    localStorage.setItem("token", newToken);
-    fetchUserData(); // Fetch user details after setting token
-  };
-
-  // ✅ Logout function clears everything
   const logoutUser = () => {
+    localStorage.removeItem("token");
     setUser(null);
     setToken(null);
-    localStorage.removeItem("token");
   };
 
   return (

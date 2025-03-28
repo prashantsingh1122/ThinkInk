@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import "./index.css"; // Ensure Tailwind CSS is imported
+import { AuthProvider } from "./context/AuthContext";
+import "./index.css"; // Import your global CSS styles here
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <AuthProvider> {/* ✅ Provide auth context */}
+      <App />
+    </AuthProvider>
   </React.StrictMode>
 );
+

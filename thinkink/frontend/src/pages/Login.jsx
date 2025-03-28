@@ -1,49 +1,41 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { login } from "../services/api";
 import AuthContext from "../context/AuthContext";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const { loginUser, user } = useContext(AuthContext);
+  const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle login submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await login(formData);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("✅ Login Success:", data);
-        loginUser(data.token); // ✅ Set token & fetch user details
+      if (res.error) {
+        setError(res.error);
       } else {
-        setError(data.message || "Invalid credentials");
+        console.log("✅ Login Success:", res);
+
+        // ✅ Call context function to store token
+        loginUser(res.token);
+
+        // ✅ Use navigate to redirect to dashboard
+        navigate("/dashboard");
       }
     } catch (error) {
       console.error("❌ Login Error:", error);
       setError("Something went wrong. Please try again.");
     }
   };
-
-  // ✅ Navigate AFTER user is set
-  if (user) {
-    console.log("✅ Redirecting to Dashboard...");
-    navigate("/dashboard");
-  }
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -68,7 +60,10 @@ export default function Login() {
           onChange={handleChange}
           required
         />
-        <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition" type="submit">
+        <button
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+          type="submit"
+        >
           Login
         </button>
       </form>

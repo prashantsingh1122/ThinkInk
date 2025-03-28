@@ -11,22 +11,22 @@ import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   return (
-    <AuthProvider>   {/* ✅ Wrap everything with AuthProvider */}
-      <Router>
+    <Router> {/* ✅ Wrap Router outside AuthProvider */}
+      <AuthProvider> {/* ✅ AuthProvider should be inside Router */}
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} /> {/* Home Page should load first */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/blog/:id" element={<Blog />} />
 
-          {/*  Protected Routes*/}
+          {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create-post" element={<CreatePost />} />
           </Route>
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }

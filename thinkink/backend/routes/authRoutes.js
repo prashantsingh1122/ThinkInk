@@ -4,10 +4,9 @@ import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import { protect } from "../middleware/authMiddleware.js"; // ✅ Correct import
 
-
 const router = express.Router();
 
-// ✅ Add the /me route
+// ✅ Add the /me route (Protected)
 router.get("/me", protect, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password"); // Exclude password
@@ -16,7 +15,7 @@ router.get("/me", protect, async (req, res) => {
     }
     res.json(user);
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("❌ Error fetching user:", error.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -24,8 +23,6 @@ router.get("/me", protect, async (req, res) => {
 // 🔹 Signup Route
 router.post("/signup", async (req, res) => {
   try {
-    console.log("🔹 Signup request received:", req.body);
-
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -49,40 +46,36 @@ router.post("/signup", async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.error("❌ Signup Error:", error);
+    console.error("❌ Signup Error:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// 🔹 Login Route (Fixing 404 Error)
+// 🔹 Login Route
 router.post("/login", async (req, res) => {
   try {
-    console.log("🔹 Login request received:", req.body);
-
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    // Check if password is correct
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id }, "your_jwt_secret", { expiresIn: "1h" });
+    // ✅ Generate JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ message: "Login successful", token });
   } catch (error) {
-    console.error("❌ Login Error:", error);
+    console.error("❌ Login Error:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
