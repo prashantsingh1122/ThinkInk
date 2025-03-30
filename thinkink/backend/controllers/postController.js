@@ -11,8 +11,20 @@ export const createPost = async (req, res) => {
     }
 
     let imageUrl = null;
-    if (req.file) {
-      imageUrl = await uploadImageToCloudinary(req.file.path); // Fix image path
+   
+     // Check if an image file is present
+     if (req.file) {
+      try {
+        // Upload the image to Cloudinary
+        const result = await uploadImageToCloudinary(req.file.buffer);
+        imageUrl = result.secure_url; // Get the uploaded image URL from Cloudinary response
+        console.log("Image uploaded to Cloudinary:", imageUrl); // Debugging log
+      } catch (error) {
+        console.error("Cloudinary Upload Error:", error);
+        return res.status(500).json({ error: "Image upload failed" });
+      }
+    } else {
+      console.log("No image file found in request");
     }
 
     const newPost = new Post({
@@ -108,5 +120,5 @@ export const deletePost = async (req, res) => {
     console.error("Delete Post Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-  
+
 };

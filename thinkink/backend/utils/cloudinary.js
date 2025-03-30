@@ -9,10 +9,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadImageToCloudinary = async (fileBuffer) => {
+export const uploadImageToCloudinary = async (imageBuffer) => {
   try {
-    const result = await cloudinary.uploader.upload_stream({ resource_type: "image" });
-    return result.secure_url;
+    const result = await cloudinary.uploader.upload_stream({ resource_type: "image" }).end(imageBuffer);
+    return result;
   } catch (error) {
     console.error("Cloudinary Upload Error:", error);
     throw error;
