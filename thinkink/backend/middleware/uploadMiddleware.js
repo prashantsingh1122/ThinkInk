@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 
 // Multer Storage Configuration
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/"); // Folder where images will be stored
   },

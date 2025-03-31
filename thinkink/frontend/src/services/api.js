@@ -27,31 +27,25 @@ export const login = async (userData) => {
 };
 
 // ✅ Create a new blog post
-export const createPost = async (postData) => {
+export const createPost = async (formData) => {
   try {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No auth token found, please login again.");
 
-    const formData = new FormData();
-    formData.append("title", postData.title);
-    formData.append("content", postData.content);
-    if (postData.image) {
-      formData.append("image", postData.image); // Attach image if present
-    }
-
     const response = await axios.post(
-      "http://localhost:5000/api/posts",
+      "http://localhost:5000/api/posts",  // ✅ Correct URL for creating posts",
       formData,
       {
         headers: {
+          "Content-Type": "multipart/form-data",  // Important: Tell the server about form-data
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          // Do NOT manually set the Content-Type when using FormData
         },
       }
     );
     return response.data;
   } catch (error) {
-    console.error("🚨 Error creating post:", error);
+    console.error("🚨 Error creating post:", error.response?.data || error.message);
     throw error;
   }
 };

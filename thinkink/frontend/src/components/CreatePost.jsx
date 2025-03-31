@@ -24,7 +24,11 @@ const CreatePost = () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-    if (image) formData.append("image", image); // Attach image if present
+
+    if (image) {
+      console.log("Image to be uploaded:", image); // Log the image file
+      formData.append("image", image); // Attach image if present
+    }
 
     try {
       const res = await createPost(formData); // Send FormData to the API

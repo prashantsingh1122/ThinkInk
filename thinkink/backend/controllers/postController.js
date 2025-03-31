@@ -4,27 +4,21 @@ import { uploadImageToCloudinary } from "../utils/cloudinary.js";
 export const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.id; // Get user ID from auth middleware
 
     if (!title || !content) {
       return res.status(400).json({ error: "Title and content are required" });
     }
 
     let imageUrl = null;
-   
-     // Check if an image file is present
-     if (req.file) {
-      try {
-        // Upload the image to Cloudinary
-        const result = await uploadImageToCloudinary(req.file.buffer);
-        imageUrl = result.secure_url; // Get the uploaded image URL from Cloudinary response
-        console.log("Image uploaded to Cloudinary:", imageUrl); // Debugging log
-      } catch (error) {
-        console.error("Cloudinary Upload Error:", error);
-        return res.status(500).json({ error: "Image upload failed" });
-      }
+
+    // Check if an image file is present
+    if (req.file) {
+      console.log("📝 Image received:", req.file);
+      imageUrl = await uploadImageToCloudinary(req.file.path);
+      console.log("✅ Image uploaded successfully:", imageUrl);
     } else {
-      console.log("No image file found in request");
+      console.warn("⚠️ No image file found in request.");
     }
 
     const newPost = new Post({
