@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import { uploadImageToCloudinary } from "../utils/cloudinary.js";
+import User from "../models/userModel.js";  // ✅ Import the User model
 
 export const createPost = async (req, res) => {
   try {
@@ -36,14 +37,16 @@ export const createPost = async (req, res) => {
 
 
 
-// ✅ Get all posts
+// Get all posts
 export const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find().populate("author", "username email");
-    res.status(200).json(posts);
+      const posts = await Post.find()
+          .populate("author", "username email")  // Populate author details
+          .sort({ createdAt: -1 });  // Sort by latest
+      res.json(posts);
   } catch (error) {
-    console.error("Get Posts Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+      console.error("Get Posts Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

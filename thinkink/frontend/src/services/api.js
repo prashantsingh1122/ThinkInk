@@ -49,3 +49,12 @@ export const createPost = async (formData) => {
     throw error;
   }
 };
+
+
+
+
+//✅ Get all blog posts
+export const getAllPosts = async () => {
+  const response = await axios.get("http://localhost:5000/api/posts");
+  return response.data; 
+};
