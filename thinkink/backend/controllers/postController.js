@@ -4,7 +4,7 @@ import { uploadImageToCloudinary } from "../utils/cloudinary.js";
 export const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
-    const userId = req.user.id; // Get user ID from auth middleware
+    const userId = req.user.id;
 
     if (!title || !content) {
       return res.status(400).json({ error: "Title and content are required" });
@@ -15,10 +15,8 @@ export const createPost = async (req, res) => {
     // Check if an image file is present
     if (req.file) {
       console.log("📝 Image received:", req.file);
-      imageUrl = await uploadImageToCloudinary(req.file.path);
+      imageUrl = await uploadImageToCloudinary(req.file.buffer);
       console.log("✅ Image uploaded successfully:", imageUrl);
-    } else {
-      console.warn("⚠️ No image file found in request.");
     }
 
     const newPost = new Post({

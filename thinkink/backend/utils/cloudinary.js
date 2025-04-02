@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import streamifier from "streamifier";
 
 dotenv.config();
 
@@ -23,15 +24,22 @@ const storage = new CloudinaryStorage({
 
 export const upload = multer({ storage });
 
-// Image upload function
-export const uploadImageToCloudinary = async (filePath) => {
-  try {
-    const result = await cloudinary.uploader.upload(filePath, {
-      folder: "Blog_Images",
-    });
-    return result.secure_url;
-  } catch (error) {
-    console.error("🚨 Cloudinary Upload Error:", error.message);
-    throw error;
-  }
+// Upload image from buffer
+export const uploadImageToCloudinary = async (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: "Blog_Images" },
+      (error, result) => {
+        if (error) {
+          console.error("🚨 Cloudinary Upload Error:", error.message);
+          reject(error);
+        } else {
+          console.log("✅ Image uploaded successfully:", result.secure_url);
+          resolve(result.secure_url);
+        }
+      }
+    );
+
+    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+  });
 };

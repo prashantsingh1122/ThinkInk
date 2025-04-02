@@ -35,9 +35,17 @@ const CreatePost = () => {
       console.log("✅ Post created successfully:", res);
       alert("Post created successfully!");
     } catch (error) {
-      console.error("❌ Error creating post:", error);
-      alert("Error creating post. Please try again.");
+      console.error("🚨 Create Post Error:", error.message);
+      if (error.response) {
+        console.error("Response Data:", error.response.data);
+        console.error("Response Status:", error.response.status);
+      }
+      if (error.request) {
+        console.error("Request Data:", error.request);
+      }
+      res.status(500).json({ error: error.message || "Internal Server Error" });
     }
+
   };
 
   return (

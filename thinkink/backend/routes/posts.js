@@ -1,11 +1,6 @@
 import express from "express";
 import {
-  createPost,
-  getPosts,
-  getPost,
-  updatePost,
-  deletePost,
-} from "../controllers/postController.js";
+  createPost, getPosts,getPost, updatePost,deletePost,} from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
 
