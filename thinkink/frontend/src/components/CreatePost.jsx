@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
 
+
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -49,6 +50,8 @@ const CreatePost = () => {
   };
 
   return (
+  <div>
+    
     <form onSubmit={handleSubmit}>
       <input
         type="text"
@@ -68,6 +71,8 @@ const CreatePost = () => {
       />
       <button type="submit">Create Post</button>
     </form>
+  </div>
+   
   );
 };
 

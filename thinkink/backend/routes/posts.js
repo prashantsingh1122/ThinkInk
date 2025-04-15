@@ -21,4 +21,6 @@ router.put("/:id", protect, updatePost);
 // Delete a post (Protected)
 router.delete("/:id", protect, deletePost);
 
+router.get('/', protect, getPosts); // ⬅️ this route
+
 export default router;

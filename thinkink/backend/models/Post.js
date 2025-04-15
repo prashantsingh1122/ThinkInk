@@ -14,7 +14,7 @@ const PostSchema = new mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,   // ✅ Reference to the User model
-      ref: "user",
+      ref: "User",
       required: true,
     },
     image: {

@@ -40,13 +40,15 @@ export const createPost = async (req, res) => {
 // Get all posts
 export const getPosts = async (req, res) => {
   try {
-      const posts = await Post.find()
-          .populate("author", "username email")  // Populate author details
-          .sort({ createdAt: -1 });  // Sort by latest
-      res.json(posts);
+    console.log("Fetching all posts...");
+    const posts = await Post.find()
+      .populate("author", "username email")  // Populate author details
+      .sort({ createdAt: -1 });  // Sort by latest
+      console.log("Posts fetched successfully:", posts);
+    res.json(posts);
   } catch (error) {
-      console.error("Get Posts Error:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Get Posts Error:", error);
+    res.status(500).json({ error: "Failing to get post" });
   }
 };
 

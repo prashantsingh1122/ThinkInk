@@ -8,6 +8,9 @@ export default function Login() {
   const [error, setError] = useState("");
   const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  // Inside your login function
+
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,6 +28,10 @@ export default function Login() {
       } else {
         console.log("✅ Login Success:", res);
 
+
+        // ✅ Store token in localStorage manually here
+        localStorage.setItem("token", res.token); // Add this line
+
         // ✅ Call context function to store token
         loginUser(res.token);
 
@@ -34,6 +41,8 @@ export default function Login() {
     } catch (error) {
       console.error("❌ Login Error:", error);
       setError("Something went wrong. Please try again.");
+
+
     }
   };
 
