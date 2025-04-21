@@ -1,6 +1,7 @@
 import express from "express";
 import {
-  createPost, getPosts,getPost, updatePost,deletePost,} from "../controllers/postController.js";
+  createPost, getPosts,getPost,
+   } from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
 
@@ -13,14 +14,16 @@ router.post("/", protect, upload.single("image"), createPost);
 router.get("/", getPosts);
 
 // Get a single post by ID
-router.get("/:id", getPost);
+router.get("/api/posts/:id",protect, getPost);
 
 // Update a post (Protected)
-router.put("/:id", protect, updatePost);
 
-// Delete a post (Protected)
-router.delete("/:id", protect, deletePost);
 
 router.get('/', protect, getPosts); // ⬅️ this route
+
+
+
+// routes/posts.js
+
 
 export default router;

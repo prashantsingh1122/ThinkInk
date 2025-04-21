@@ -1,6 +1,11 @@
 import Post from "../models/Post.js";
 import { uploadImageToCloudinary } from "../utils/cloudinary.js";
 import User from "../models/userModel.js";  // ✅ Import the User model
+import mongoose from "mongoose";
+
+
+
+ // ✅ Import the Post model
 
 export const createPost = async (req, res) => {
   try {
@@ -53,69 +58,31 @@ export const getPosts = async (req, res) => {
 };
 
 // ✅ Get a single post
+ // Make sure this is imported
+
+
 export const getPost = async (req, res) => {
+  const { id } = req.params;
+
+  // Check if the id is a valid ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid post ID' });
+  }
+
   try {
-    const post = await Post.findById(req.params.id).populate("author", "username email");
-
+    const post = await Post.findById(id); // Query the post by ID
     if (!post) {
-      return res.status(404).json({ error: "Post not found" });
+      return res.status(404).json({ message: 'Post not found' });
     }
-
-    res.status(200).json(post);
-  } catch (error) {
-    console.error("Get Post Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(200).json(post); // Send the post details
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
+
+
 
 // ✅ Update a post
-export const updatePost = async (req, res) => {
-  try {
-    const { title, content, image } = req.body;
-    const post = await Post.findById(req.params.id);
-
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
-    // Ensure the user is the author of the post
-    if (post.author.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Unauthorized" });
-    }
-
-    post.title = title || post.title;
-    post.content = content || post.content;
-    post.image = image || post.image;
-
-    await post.save();
-    res.status(200).json(post);
-  } catch (error) {
-    console.error("Update Post Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-
-
-// ✅ Delete a post
-export const deletePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
-    // Ensure the user is the author
-    if (post.author.toString() !== req.user.id) {
-      return res.status(403).json({ error: "Unauthorized" });
-    }
-
-    await post.deleteOne();
-    res.status(200).json({ message: "Post deleted successfully" });
-  } catch (error) {
-    console.error("Delete Post Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-
-};

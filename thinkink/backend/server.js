@@ -11,10 +11,12 @@ connectDB();
 
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
+
 app.use(cors({
-  origin: "http://localhost:5173", // Your frontend URL
-  credentials: true
-})); // ✅ Enable CORS
+  origin: ['http://localhost:5173', 'http://192.168.1.4:5173'],
+  credentials: true,
+}));
+
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes); // Make sure this is correct
@@ -26,7 +28,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ HOGYA MANGUDIBBA");
-    app.listen(process.env.PORT || 5000, () =>
+    app.listen(process.env.PORT || 5000, '0.0.0.0', () =>
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
     );
   })

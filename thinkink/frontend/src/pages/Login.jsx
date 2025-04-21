@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/api";
 import AuthContext from "../context/AuthContext";
+import Waves from './Lightning';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -47,8 +48,12 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form className="bg-white p-6 rounded-lg shadow-lg w-96" onSubmit={handleSubmit}>
+    
+
+
+
+    <div className="flex items-center justify-center h-screen bg-transparent bg-gray-900">
+      <form className="bg-black p-6 rounded-lg shadow-lg w-96" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <input
@@ -76,6 +81,23 @@ export default function Login() {
           Login
         </button>
       </form>
+      <div style={{ width: '100%', height: '600px', position: 'relative' }}>
+    <Waves
+      lineColor="#fff"
+      backgroundColor="rgba(255, 255, 255, 0.2)"
+      waveSpeedX={0.02}
+      waveSpeedY={0.01}
+      waveAmpX={40}
+      waveAmpY={20}
+      friction={0.9}
+      tension={0.01}
+      maxCursorMove={120}
+      xGap={12}
+      yGap={36}
+    />
     </div>
+    </div>
+    
+    
   );
 }

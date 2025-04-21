@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api/auth"; // ✅ Correct URL
+const API_BASE_URL = "http://192.168.1.4:5000/api/auth"; // ✅ Correct URL
 
 // ✅ Signup function
 export const signup = async (userData) => {
@@ -33,7 +33,7 @@ export const createPost = async (formData) => {
     if (!token) throw new Error("No auth token found, please login again.");
 
     const response = await axios.post(
-      "http://localhost:5000/api/posts",  // ✅ Correct URL for creating posts",
+      "http://192.168.1.4:5000/api/posts",  // ✅ Correct URL for creating posts",
       formData,
       {
         headers: {
@@ -55,6 +55,25 @@ export const createPost = async (formData) => {
 
 //✅ Get all blog posts
 export const getAllPosts = async () => {
-  const response = await axios.get("http://localhost:5000/api/posts");
+  const response = await axios.get("http://192.168.1.4:5000/api/posts");
   return response.data; 
 };
+
+
+// ✅ Get a post by ID
+
+
+// ✅ Get a post by ID
+export const getPost = async (id) => {
+  try {
+    const response = await axios.get(`http://192.168.1.4:5000/api/posts/${id}`);
+    return response;  // Make sure you return the entire response object
+  } catch (err) {
+    console.error("Failed to fetch post:", err);
+    throw err;  // Propagate the error so you can catch it in the component
+  }
+};
+
+
+
+

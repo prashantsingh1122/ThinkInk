@@ -13,7 +13,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white shadow-md p-4 flex justify-between items-center">
+    <nav className="bg-orange-300 shadow-md p-4 flex justify-between items-center">
       <Link to="/" className="text-2xl font-bold text-gray-800">THINKINK</Link>
       <div className="flex items-center space-x-4">
         {user ? (

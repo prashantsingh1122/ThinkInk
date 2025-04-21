@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import Navbar from "./components/Navbar";
 import CreatePost from "./components/CreatePost";
 import { AuthProvider } from "./context/AuthContext";
+import PostDetail from "./pages/PostDetail";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create-post" element={<CreatePost />} />
+            <Route path="/posts/:id" element={<PostDetail />} />
           </Route>
         </Routes>
       </AuthProvider>
