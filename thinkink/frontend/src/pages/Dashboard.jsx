@@ -1,57 +1,58 @@
-import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import PostsList from "../components/PostsList";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { getAllPosts } from "../services/api";
+import { Link } from "react-router-dom";
 
-const Dashboard = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+const PostsList = () => {
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    } else {
-      setUser({ name: "CVAM GANgSTER" }); // Replace later with real API call
-    }
-  }, [navigate]);
+    const fetchPosts = async () => {
+      try {
+        const data = await getAllPosts();
+        setPosts(data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-gray-900 flex items-center justify-center px-4 py-10">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-5xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl rounded-3xl px-8 py-10"
-      >
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">📋 Dashboard</h1>
-          {user && (
-            <p className="text-indigo-200 text-base">
-              👋 Welcome back, <span className="font-semibold text-white">{user.name}</span>
-            </p>
-          )}
-
-          <Link to="/create-post">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="mt-6 bg-emerald-400 text-black font-medium px-6 py-2 rounded-full shadow-lg hover:bg-emerald-500 transition-all duration-300"
+    <div className="p-4 bg-slate-900 rounded-xl shadow-inner">
+      <h2 className="text-3xl font-bold mb-8 text-center text-white">📝 Posts</h2>
+      {posts.length === 0 ? (
+        <p className="text-center text-gray-400">No posts available.</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
+          {posts.map((post) => (
+            <Link
+              to={`/posts/${post._id}`}
+              key={post._id}
+              className="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg hover:shadow-2xl transform transition-all hover:scale-[1.02]"
             >
-              ➕ Create New Post
-            </motion.button>
-          </Link>
-        </div>
+              <h3 className="text-2xl font-semibold text-white text-center mb-1">{post.title}</h3>
+              <p className="text-gray-400 text-sm mb-3 text-center">
+                By {post.author?.username || "Unknown"}
+              </p>
 
-        <div>
-          <h2 className="text-2xl font-semibold text-white mb-4">📰 Your Posts</h2>
-          <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10">
-            <PostsList />
-          </div>
+              {post.image && (
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-48 object-cover rounded-lg mb-4 transition-transform duration-300 hover:scale-105"
+                />
+              )}
+
+              <p className="text-gray-300">{post.content.slice(0, 100)}...</p>
+              <p className="mt-3 text-indigo-400 text-sm text-right hover:underline">
+                Read more →
+              </p>
+            </Link>
+          ))}
         </div>
-      </motion.div>
+      )}
     </div>
   );
 };
 
-export default Dashboard;
+export default PostsList;
