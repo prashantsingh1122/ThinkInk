@@ -2,16 +2,13 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/api";
 import AuthContext from "../context/AuthContext";
-import Waves from './Lightning';
+import Particles from "./Lightning";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  // Inside your login function
-
-
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,77 +24,71 @@ export default function Login() {
       if (res.error) {
         setError(res.error);
       } else {
-        console.log("✅ Login Success:", res);
-
-
-        // ✅ Store token in localStorage manually here
-        localStorage.setItem("token", res.token); // Add this line
-
-        // ✅ Call context function to store token
+        localStorage.setItem("token", res.token);
         loginUser(res.token);
-
-        // ✅ Use navigate to redirect to dashboard
         navigate("/dashboard");
       }
     } catch (error) {
-      console.error("❌ Login Error:", error);
+      console.error("Login Error:", error);
       setError("Something went wrong. Please try again.");
-
-
     }
   };
 
   return (
-    
-
-
-
-    <div className="flex items-center justify-center h-screen bg-transparent bg-gray-900">
-      <form className="bg-black p-6 rounded-lg shadow-lg w-96" onSubmit={handleSubmit}>
-        <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full p-2 border rounded mb-3"
-          value={formData.email}
-          onChange={handleChange}
-          required
+    <div className="relative flex items-center justify-center h-screen w-full bg-gray-900 overflow-hidden">
+      {/* Particle Background */}
+      <div className="absolute inset-0 z-0">
+        <Particles
+          particleColors={["#ffffff", "#cccccc"]}
+          particleCount={200}
+          particleSpread={10}
+          speed={0.1}
+          particleBaseSize={100}
+          moveParticlesOnHover={true}
+          alphaParticles={false}
+          disableRotation={false}
         />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full p-2 border rounded mb-3"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
-          type="submit"
-        >
-          Login
-        </button>
-      </form>
-      <div style={{ width: '100%', height: '600px', position: 'relative' }}>
-    <Waves
-      lineColor="#fff"
-      backgroundColor="rgba(255, 255, 255, 0.2)"
-      waveSpeedX={0.02}
-      waveSpeedY={0.01}
-      waveAmpX={40}
-      waveAmpY={20}
-      friction={0.9}
-      tension={0.01}
-      maxCursorMove={120}
-      xGap={12}
-      yGap={36}
-    />
+      </div>
+
+      {/* Form Container */}
+      <div className="relative z-10 w-full max-w-sm px-6 py-10 bg-white/5 backdrop-blur-md border border-gray-700 rounded-2xl shadow-lg">
+        <h2 className="text-white text-3xl font-semibold text-center mb-6">
+          Welcome Back
+        </h2>
+
+        {error && (
+          <p className="text-red-400 text-sm text-center mb-4">{error}</p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-md placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 outline-none"
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 bg-gray-800 text-white rounded-md placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 outline-none"
+          />
+
+          <button
+            type="submit"
+            className="w-full py-2 bg-indigo-500 text-white rounded-md font-medium hover:bg-indigo-600 transition-shadow hover:shadow-xl"
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
-    </div>
-    
-    
   );
 }

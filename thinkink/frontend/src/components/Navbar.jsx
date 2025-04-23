@@ -1,34 +1,60 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      // Fetch user details from API (optional)
-      setUser({ name: "CVAM " }); // Replace with actual API call
+      setUser({ name: "CVAM" }); // optional: fetch user info from API
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/login");
+  };
+
+  const hideNavbarRoutes = ["/login", "/signup"];
+  if (hideNavbarRoutes.includes(location.pathname)) {
+    return null;
+  }
+
   return (
-    <nav className="bg-orange-300 shadow-md p-4 flex justify-between items-center">
-      <Link to="/" className="text-2xl font-bold text-gray-800">THINKINK</Link>
-      <div className="flex items-center space-x-4">
-        {user ? (
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <span className="text-gray-800">{user.name}</span>
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Profile"
-              className="w-10 h-10 rounded-full"
-            />
+    <nav className="backdrop-blur-lg bg-gradient-to-r from-slate-900/60 to-slate-800/60 border-b border-white/10 shadow-sm px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+      <Link
+        to="/"
+        className="text-2xl font-extrabold bg-gradient-to-r from-pink-400 to-violet-500 bg-clip-text text-transparent hover:opacity-90 transition duration-200"
+      >
+        THINKINK
+      </Link>
+
+      {user && (
+        <div className="flex items-center space-x-6 text-white text-sm font-medium">
+          <Link
+            to="/dashboard"
+            className="hover:text-pink-300 transition duration-200"
+          >
+            Dashboard
           </Link>
-        ) : (
-          <Link to="/login" className="text-gray-800 hover:text-blue-600"> Login</Link>
-        )}
-      </div>
+          <Link
+            to="/profile"
+            className="hover:text-pink-300 transition duration-200"
+          >
+            Profile
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 px-4 py-1.5 rounded-full hover:bg-red-600 transition duration-200 text-white font-semibold shadow-sm"
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

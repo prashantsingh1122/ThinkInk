@@ -56,7 +56,7 @@ export const createPost = async (formData) => {
 //✅ Get all blog posts
 export const getAllPosts = async () => {
   const response = await axios.get("http://192.168.1.4:5000/api/posts");
-  return response.data; 
+  return response.data;
 };
 
 
@@ -74,6 +74,53 @@ export const getPost = async (id) => {
   }
 };
 
+// ✅ Update a post by ID
+export const updatePost = async (id, updatedData) => {
+  const token =localStorage.getItem("token");
+
+    const response = await axios.put(
+      `http://192.168.1.4:5000/api/posts/${id}`,
+      updatedData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  };
 
 
 
+
+
+
+  export const getUserPosts = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://192.168.1.4:5000/api/posts/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user's posts:", error);
+      throw error;
+    }
+  };
+
+
+  // ✅ Delete a post by ID
+  export const deletePost = async (postId) => {
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(`http://192.168.1.4:5000/api/posts/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  };
+  
+  

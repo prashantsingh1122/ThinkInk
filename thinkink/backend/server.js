@@ -21,6 +21,11 @@ app.use(cors({
 // ✅ API Routes
 app.use("/api/auth", authRoutes); // Make sure this is correct
 app.use("/api/posts",postRoutes); // Make sure this is correct  
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
 
 
 // ✅ Connect to MongoDB

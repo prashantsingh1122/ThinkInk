@@ -1,43 +1,60 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getPost } from "../services/api";  // Import the getPost function from api.js
+import { getPost } from "../services/api";
+import { motion } from "framer-motion";
 
 export default function PostDetail() {
-  const { id } = useParams();  // Get the post ID from the URL params
-  const [post, setPost] = useState(null);  // State to store post data
+  const { id } = useParams();
+  const [post, setPost] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const cleanId = id.trim();  // Remove any extra spaces or newlines
-        console.log("Fetching post with ID:", cleanId);  // Debugging log
-        const res = await getPost(cleanId);  // Call the API function to fetch the post
-        console.log("Post fetched:", res.data);  // Debugging log to check the response
-        setPost(res.data);  // Set the post data to state
+        const cleanId = id.trim();
+        console.log("Fetching post with ID:", cleanId);
+        const res = await getPost(cleanId);
+        console.log("Post fetched:", res.data);
+        setPost(res.data);
       } catch (err) {
-        console.error("Failed to fetch post:", err);  // Log any errors
+        console.error("Failed to fetch post:", err);
       }
     };
 
     if (id) {
-      fetchPost();  // Fetch the post if the ID is available
+      fetchPost();
     }
-  }, [id]);  // This effect runs when the `id` changes
+  }, [id]);
 
-  if (!post) return <p>Loading...</p>;  // Show loading state if post data isn't available yet
+  if (!post) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-900 text-white text-xl">
+        Loading post...
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-3xl text-center">{post.title}</h1>
-      <p className="text-xl  text-center py-3">{post.content}</p>
-      {post.image && (
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover rounded-lg mb-3"
-                />
-              )}
-      {/* Display other post details as needed */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-12 text-white flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="bg-slate-700 bg-opacity-40 backdrop-blur-lg rounded-xl shadow-2xl p-8 max-w-3xl w-full"
+      >
+        <h1 className="text-4xl font-bold text-pink-400 mb-4 text-center">
+          {post.title}
+        </h1>
+        {post.image && (
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full rounded-lg shadow-md mb-6 object-cover max-h-[500px] transition duration-300 hover:scale-[1.01]"
+          />
+        )}
+        <p className="text-lg text-slate-200 leading-relaxed text-center">
+          {post.content}
+        </p>
+      </motion.div>
     </div>
   );
 }

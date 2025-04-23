@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 
 
- // ✅ Import the Post model
+// ✅ Import the Post model
 
 export const createPost = async (req, res) => {
   try {
@@ -49,7 +49,7 @@ export const getPosts = async (req, res) => {
     const posts = await Post.find()
       .populate("author", "username email")  // Populate author details
       .sort({ createdAt: -1 });  // Sort by latest
-      console.log("Posts fetched successfully:", posts);
+    console.log("Posts fetched successfully:", posts);
     res.json(posts);
   } catch (error) {
     console.error("Get Posts Error:", error);
@@ -58,7 +58,7 @@ export const getPosts = async (req, res) => {
 };
 
 // ✅ Get a single post
- // Make sure this is imported
+// Make sure this is imported
 
 
 export const getPost = async (req, res) => {
@@ -86,3 +86,47 @@ export const getPost = async (req, res) => {
 
 
 // ✅ Update a post
+// ✅ PUT /api/posts/:id
+export const updatePost = async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.userId; // assuming your auth middleware sets req.userId
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (post.author.toString() !== userId) {
+      return res.status(403).json({ error: "Unauthorized to edit this post" });
+    }
+
+    // Update post fields
+    const { title, content, image } = req.body;
+    post.title = title || post.title;
+    post.content = content || post.content;
+    if (image) post.image = image;
+
+    const updatedPost = await post.save();
+    res.json(updatedPost);
+  } catch (err) {
+    console.error("❌ Error updating post:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Get posts created by logged-in user
+export const getUserPosts = async (req, res) => {
+  try {
+    const userId = req.user._id; // comes from authMiddleware
+    const posts = await Post.find({ author: userId }).sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user posts', error });
+  }
+};
+
+
+
+
