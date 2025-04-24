@@ -73,10 +73,7 @@ export default function Home() {
                 title: "AI-Powered Insights",
                 description: "Get smart suggestions and analytics to improve your writing"
               },
-              {
-                title: "Global Community",
-                description: "Connect with writers and readers from around the world"
-              }
+              
             ].map((feature, index) => (
               <motion.div
                 key={index}
@@ -87,6 +84,97 @@ export default function Home() {
               >
                 <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-serif font-bold text-center mb-16">What Writers Say</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "ThinkInk transformed how I connect with my audience. The tools are intuitive and powerful.",
+                author: "Sarah Chen",
+                role: "Tech Blogger"
+              },
+              {
+                quote: "The AI-powered insights have helped me improve my writing significantly. Highly recommended!",
+                author: "Marcus Rodriguez",
+                role: "Travel Writer"
+              },
+              {
+                quote: "Finally, a platform that understands what modern writers need. The community is amazing!",
+                author: "Emma Thompson",
+                role: "Lifestyle Blogger"
+              }
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
+                className="bg-[#fdf6f0] p-8 rounded-2xl"
+              >
+                <p className="text-gray-700 mb-6 italic">"{testimonial.quote}"</p>
+                <div>
+                  <p className="font-bold">{testimonial.author}</p>
+                  <p className="text-gray-600">{testimonial.role}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Blogs Section */}
+      <section className="py-20 px-4 bg-[#f6f1ff]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-serif font-bold text-center mb-16">Featured Stories</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "The Future of AI in Content Creation",
+                excerpt: "Exploring how artificial intelligence is reshaping the landscape of content creation...",
+                author: "David Park",
+                readTime: "5 min read",
+                category: "Technology"
+              },
+              {
+                title: "Sustainable Living in 2024",
+                excerpt: "A comprehensive guide to adopting eco-friendly practices in your daily life...",
+                author: "Lisa Green",
+                readTime: "7 min read",
+                category: "Lifestyle"
+              },
+              {
+                title: "Remote Work Culture",
+                excerpt: "Building strong team connections in a distributed workplace environment...",
+                author: "James Wilson",
+                readTime: "6 min read",
+                category: "Business"
+              }
+            ].map((blog, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm"
+              >
+                <div className="h-48 bg-gray-200"></div>
+                <div className="p-6">
+                  <span className="text-sm text-indigo-600 font-medium">{blog.category}</span>
+                  <h3 className="text-xl font-bold mt-2 mb-3">{blog.title}</h3>
+                  <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <span>{blog.author}</span>
+                    <span>{blog.readTime}</span>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>

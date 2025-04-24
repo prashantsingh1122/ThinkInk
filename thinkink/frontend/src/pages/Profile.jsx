@@ -1,78 +1,129 @@
 import { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { getUserPosts } from '../services/api';
 import AuthContext from '../context/AuthContext';
+import { motion } from 'framer-motion';
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchUserPosts = async () => {
-    console.log("🔄 Attempting to fetch user posts");
-    try {
-      const res = await axios.get("http://192.168.1.4:5000/api/posts/me", {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-      console.log("✅ Fetched user posts:", res.data);
-      setPosts(Array.isArray(res.data) ? res.data : res.data.posts || []);
-    } catch (err) {
-      console.error("❌ Failed to fetch user posts:", err);
-      setPosts([]);
-    } finally {
-      console.log("✅ Finished loading user posts");
-      setLoading(false);
-    }
-  };
-  
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (user?.token) {
-      console.log("User in Profile useEffect:", user);
+    const fetchUserPosts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getUserPosts();
+        setPosts(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to fetch user posts:", err);
+        setError("Failed to load your posts. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    if (token) {
       fetchUserPosts();
     }
-  }, [user]);
-  
-  return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">Your Blog Posts</h1>
-      {loading ? (
-        <p className="text-center">Loading...</p>
-      ) : posts.length === 0 ? (
-        <p className="text-center">No posts found. Go write something awesome!</p>
-      ) : (
-        <div className="grid gap-6">
-          {posts.map((post) => (
-            <div
-              key={post._id}
-              className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
-            >
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                <p className="text-gray-700 mb-4 line-clamp-3">
-                  {post.content}
-                </p>
-                <Link
-                  to={`/post/${post._id}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  Read More →
-                </Link>
-              </div>
-            </div>
-          ))}
+  }, [token]);
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-white pt-24 px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Please Login</h1>
+          <p className="text-gray-600">You need to be logged in to view your profile.</p>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white pt-24 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Profile Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Posts</h1>
+          <p className="text-gray-600">
+            {user?.username ? `Welcome back, ${user.username}!` : 'Welcome back!'}
+          </p>
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && posts.length === 0 && (
+          <div className="text-center py-12 bg-gray-50 rounded-2xl">
+            <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No posts yet</h3>
+            <p className="text-gray-600 mb-6">Start writing your first post!</p>
+            <Link
+              to="/create-post"
+              className="inline-flex items-center px-6 py-2 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
+            >
+              Create Post
+            </Link>
+          </div>
+        )}
+
+        {/* Posts Grid */}
+        {!loading && !error && posts.length > 0 && (
+          <div className="grid gap-8 md:grid-cols-2">
+            {posts.map((post) => (
+              <motion.div
+                key={post._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+              >
+                {post.image && (
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h2>
+                  <p className="text-gray-600 mb-4 line-clamp-2">{post.content}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">
+                      {new Date(post.createdAt).toLocaleDateString()}
+                    </span>
+                    <Link
+                      to={`/posts/${post._id}`}
+                      className="text-gray-900 font-medium text-sm hover:translate-x-1 transition-transform inline-block"
+                    >
+                      Read More →
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

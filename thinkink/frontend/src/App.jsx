@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Blog from "./pages/Blog";
 import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoutes";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import CreatePost from "./components/CreatePost";
 import { AuthProvider } from "./context/AuthContext";
@@ -41,13 +41,46 @@ export default function App() {
             <Route path="/blog/:id" element={<Blog />} />
 
             {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/create-post" element={<CreatePost />} />
-              <Route path="/profile" element={<Profile />} /> {/* Assuming you have a Profile component */}
-              <Route path="/posts/:id" element={<PostDetail />} />
-              <Route path="/posts/:id/edit" element={<EditPost />} /> {/* Moved edit to separate path */}
-            </Route>
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-post"
+              element={
+                <ProtectedRoute>
+                  <CreatePost />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/:id"
+              element={
+                <ProtectedRoute>
+                  <PostDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditPost />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Layout>
       </AuthProvider>

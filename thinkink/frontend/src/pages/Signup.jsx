@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { signup } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Particles from "./Lightning";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    username: "", // ✅ Ensure username is included
+    username: "",
     email: "",
     password: "",
   });
@@ -30,38 +31,97 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="p-6 bg-white rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">Signup</h2>
-        {error && <p className="text-red-500">{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            className="w-full p-2 mb-2 border rounded"
-            required
+    <div className="relative flex items-center justify-center min-h-screen bg-black overflow-hidden">
+      {/* Home Link */}
+      <Link 
+        to="/" 
+        className="absolute top-8 left-8 z-20 flex items-center space-x-2 text-white hover:text-purple-400 transition-colors"
+      >
+        <svg 
+          className="w-8 h-8" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" 
           />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            className="w-full p-2 mb-2 border rounded"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            className="w-full p-2 mb-2 border rounded"
-            required
-          />
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
-            Signup
+        </svg>
+        <span className="text-xl font-semibold">ThinkInk</span>
+      </Link>
+
+      {/* Particle Background */}
+      <div className="absolute inset-0 z-0">
+        <Particles
+          particleColors={["#ffffff", "#cccccc"]}
+          particleCount={200}
+          particleSpread={10}
+          speed={0.1}
+          particleBaseSize={100}
+          moveParticlesOnHover={true}
+          alphaParticles={false}
+          disableRotation={false}
+        />
+      </div>
+
+      {/* Form Container */}
+      <div className="relative z-10 w-full max-w-md p-8 bg-white/5 backdrop-blur-sm rounded-3xl">
+        <h2 className="text-4xl font-medium text-white mb-8 text-center">
+          Sign Up
+        </h2>
+
+        {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-transparent text-white border-b border-gray-600 focus:border-white transition-colors placeholder-gray-500 focus:outline-none"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-transparent text-white border-b border-gray-600 focus:border-white transition-colors placeholder-gray-500 focus:outline-none"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-transparent text-white border-b border-gray-600 focus:border-white transition-colors placeholder-gray-500 focus:outline-none"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 bg-purple-600 text-white rounded-full font-medium hover:bg-purple-700 transition-all"
+          >
+            Sign Up
           </button>
+
+          <p className="text-center text-gray-400 text-sm">
+            Already have an account?{" "}
+            <Link to="/login" className="text-purple-500 hover:text-purple-400">
+              Sign In
+            </Link>
+          </p>
         </form>
       </div>
     </div>

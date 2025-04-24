@@ -99,15 +99,40 @@ export const updatePost = async (id, updatedData) => {
   export const getUserPosts = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
       const response = await axios.get("http://192.168.1.4:5000/api/posts/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+
+      // Check if response has data and posts
+      if (!response.data) {
+        throw new Error("No data received from server");
+      }
+
+      // Handle the new response format
+      const posts = response.data.success ? response.data.posts : [];
+      return posts;
+
     } catch (error) {
-      console.error("Error fetching user's posts:", error);
-      throw error;
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Server responded with error:", error.response.data);
+        throw new Error(error.response.data.message || "Failed to fetch posts");
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("No response received:", error.request);
+        throw new Error("No response from server");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error setting up request:", error.message);
+        throw error;
+      }
     }
   };
 

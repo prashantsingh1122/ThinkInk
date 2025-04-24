@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { login } from "../services/api";
 import AuthContext from "../context/AuthContext";
 import Particles from "./Lightning";
@@ -9,6 +9,10 @@ export default function Login() {
   const [error, setError] = useState("");
   const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the redirect path from location state, or default to dashboard
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,7 +30,8 @@ export default function Login() {
       } else {
         localStorage.setItem("token", res.token);
         loginUser(res.token);
-        navigate("/dashboard");
+        // Navigate to the page they tried to visit or dashboard
+        navigate(from, { replace: true });
       }
     } catch (error) {
       console.error("Login Error:", error);
@@ -35,7 +40,28 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex items-center justify-center h-screen w-full bg-gray-900 overflow-hidden">
+    <div className="relative flex items-center justify-center min-h-screen bg-black overflow-hidden">
+      {/* Home Link */}
+      <Link 
+        to="/" 
+        className="absolute top-8 left-8 z-20 flex items-center space-x-2 text-white hover:text-purple-400 transition-colors"
+      >
+        <svg 
+          className="w-8 h-8" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            strokeWidth={2} 
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" 
+          />
+        </svg>
+        <span className="text-xl font-semibold">ThinkInk</span>
+      </Link>
+
       {/* Particle Background */}
       <div className="absolute inset-0 z-0">
         <Particles
@@ -51,42 +77,58 @@ export default function Login() {
       </div>
 
       {/* Form Container */}
-      <div className="relative z-10 w-full max-w-sm px-6 py-10 bg-white/5 backdrop-blur-md border border-gray-700 rounded-2xl shadow-lg">
-        <h2 className="text-white text-3xl font-semibold text-center mb-6">
-          Welcome Back
+      <div className="relative z-10 w-full max-w-md p-8 bg-white/5 backdrop-blur-sm rounded-3xl">
+        <h2 className="text-4xl font-medium text-white mb-8 text-center">
+          Login
         </h2>
 
         {error && (
           <p className="text-red-400 text-sm text-center mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 bg-gray-800 text-white rounded-md placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 outline-none"
-          />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <input
+              type="email"
+              name="email"
+              placeholder="Username"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 bg-transparent text-white border-b border-gray-600 focus:border-white transition-colors placeholder-gray-500 focus:outline-none"
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full px-4 py-2 bg-gray-800 text-white rounded-md placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 outline-none"
-          />
+          <div className="space-y-2">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 bg-transparent text-white border-b border-gray-600 focus:border-white transition-colors placeholder-gray-500 focus:outline-none"
+            />
+            <div className="flex justify-end">
+              <Link to="/forgot-password" className="text-sm text-gray-400 hover:text-white">
+                Forgot password?
+              </Link>
+            </div>
+          </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-indigo-500 text-white rounded-md font-medium hover:bg-indigo-600 transition-shadow hover:shadow-xl"
+            className="w-full py-3 bg-purple-600 text-white rounded-full font-medium hover:bg-purple-700 transition-all"
           >
-            Login
+            Sign In
           </button>
+
+          <p className="text-center text-gray-400 text-sm">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-purple-500 hover:text-purple-400">
+              Sign Up
+            </Link>
+          </p>
         </form>
       </div>
     </div>

@@ -119,11 +119,34 @@ export const updatePost = async (req, res) => {
 // Get posts created by logged-in user
 export const getUserPosts = async (req, res) => {
   try {
-    const userId = req.user._id; // comes from authMiddleware
-    const posts = await Post.find({ author: userId }).sort({ createdAt: -1 });
-    res.status(200).json(posts);
+    // Ensure user exists in request
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ 
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    const userId = req.user._id;
+    console.log('Fetching posts for user:', userId);
+
+    const posts = await Post.find({ author: userId })
+      .sort({ createdAt: -1 })
+      .populate('author', 'username email');
+
+    console.log(`Found ${posts.length} posts for user ${userId}`);
+
+    return res.status(200).json({
+      success: true,
+      posts: posts
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch user posts', error });
+    console.error('Error in getUserPosts:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user posts',
+      error: error.message
+    });
   }
 };
 
