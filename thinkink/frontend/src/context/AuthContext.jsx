@@ -13,7 +13,9 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const res = await fetch(`${config.apiUrl}/auth/me`, {
+          method: "GET",
           headers: { Authorization: `Bearer ${token}` },
+          credentials: "include", // ✅ ensure cookies & auth headers are sent
         });
 
         if (!res.ok) {

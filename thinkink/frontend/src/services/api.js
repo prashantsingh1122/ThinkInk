@@ -1,5 +1,7 @@
 import axios from "axios";
 import config from '../config';
+axios.defaults.withCredentials = true;
+
 
 const API_BASE_URL = `${config.apiUrl}/auth`;
 const POSTS_BASE_URL = `${config.apiUrl}/posts`;

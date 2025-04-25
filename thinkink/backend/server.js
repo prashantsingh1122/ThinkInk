@@ -13,7 +13,26 @@ const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
 
 // Simple CORS configuration for localhost
-app.use(cors());
+// Configure CORS for specific frontend URL (Vercel URL)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://thinkinkblog1122-4tv9akrzu-itsshivam135-gmailcoms-projects.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS policy violation'));
+    }
+  },
+  credentials: true, // If you're sending cookies or Authorization headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
+
 
 // Request logging middleware
 app.use((req, res, next) => {
