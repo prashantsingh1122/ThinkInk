@@ -1,6 +1,8 @@
 import axios from "axios";
+import config from '../config';
 
-const API_BASE_URL = "http://192.168.1.4:5000/api/auth"; // ✅ Correct URL
+const API_BASE_URL = `${config.apiUrl}/auth`;
+const POSTS_BASE_URL = `${config.apiUrl}/posts`;
 
 // ✅ Signup function
 export const signup = async (userData) => {
@@ -33,13 +35,12 @@ export const createPost = async (formData) => {
     if (!token) throw new Error("No auth token found, please login again.");
 
     const response = await axios.post(
-      "http://192.168.1.4:5000/api/posts",  // ✅ Correct URL for creating posts",
+      POSTS_BASE_URL,
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",  // Important: Tell the server about form-data
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
-          // Do NOT manually set the Content-Type when using FormData
         },
       }
     );
@@ -50,102 +51,82 @@ export const createPost = async (formData) => {
   }
 };
 
-
-
-
 //✅ Get all blog posts
 export const getAllPosts = async () => {
-  const response = await axios.get("http://192.168.1.4:5000/api/posts");
+  const response = await axios.get(POSTS_BASE_URL);
   return response.data;
 };
-
-
-// ✅ Get a post by ID
-
 
 // ✅ Get a post by ID
 export const getPost = async (id) => {
   try {
-    const response = await axios.get(`http://192.168.1.4:5000/api/posts/${id}`);
-    return response;  // Make sure you return the entire response object
+    const response = await axios.get(`${POSTS_BASE_URL}/${id}`);
+    return response;
   } catch (err) {
     console.error("Failed to fetch post:", err);
-    throw err;  // Propagate the error so you can catch it in the component
+    throw err;
   }
 };
 
 // ✅ Update a post by ID
 export const updatePost = async (id, updatedData) => {
-  const token =localStorage.getItem("token");
-
-    const response = await axios.put(
-      `http://192.168.1.4:5000/api/posts/${id}`,
-      updatedData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data;
-  };
-
-
-
-
-
-
-  export const getUserPosts = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await axios.get("http://192.168.1.4:5000/api/posts/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Check if response has data and posts
-      if (!response.data) {
-        throw new Error("No data received from server");
-      }
-
-      // Handle the new response format
-      const posts = response.data.success ? response.data.posts : [];
-      return posts;
-
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Server responded with error:", error.response.data);
-        throw new Error(error.response.data.message || "Failed to fetch posts");
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-        throw new Error("No response from server");
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error setting up request:", error.message);
-        throw error;
-      }
+  const token = localStorage.getItem("token");
+  const response = await axios.put(
+    `${POSTS_BASE_URL}/${id}`,
+    updatedData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     }
-  };
+  );
+  return response.data;
+};
 
-
-  // ✅ Delete a post by ID
-  export const deletePost = async (postId) => {
+export const getUserPosts = async () => {
+  try {
     const token = localStorage.getItem("token");
-    const response = await axios.delete(`http://192.168.1.4:5000/api/posts/${postId}`, {
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await axios.get(`${POSTS_BASE_URL}/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
-  };
+
+    if (!response.data) {
+      throw new Error("No data received from server");
+    }
+
+    const posts = response.data.success ? response.data.posts : [];
+    return posts;
+
+  } catch (error) {
+    if (error.response) {
+      console.error("Server responded with error:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to fetch posts");
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+      throw new Error("No response from server");
+    } else {
+      console.error("Error setting up request:", error.message);
+      throw error;
+    }
+  }
+};
+
+// ✅ Delete a post by ID
+export const deletePost = async (postId) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.delete(`${POSTS_BASE_URL}/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
   
   

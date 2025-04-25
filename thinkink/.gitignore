@@ -1,0 +1,13 @@
+# Node modules
+backend/node_modules/
+frontend/node_modules/
+
+# Environment variables
+backend/.env
+
+# Vite build output
+frontend/dist/
+
+# OS-specific
+.DS_Store
+Thumbs.db

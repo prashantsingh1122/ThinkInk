@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import config from '../config';
 
 const AuthContext = createContext();
 
@@ -11,13 +12,12 @@ export const AuthProvider = ({ children }) => {
       if (!token) return;
 
       try {
-        const res = await fetch("http://192.168.1.4:5000/api/auth/me", {
-
+        const res = await fetch(`${config.apiUrl}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!res.ok) {
-          console.error("🚨 Failed to fetch user:", res.status);
+          console.error("Failed to fetch user:", res.status);
           setUser(null);
           return;
         }
@@ -25,7 +25,8 @@ export const AuthProvider = ({ children }) => {
         const userData = await res.json();
         setUser(userData);
       } catch (error) {
-        console.error("❌ Error fetching user:", error);
+        console.error("Error fetching user:", error);
+        setUser(null);
       }
     };
 

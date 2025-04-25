@@ -12,28 +12,31 @@ connectDB();
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
 
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://192.168.1.4:5173'],
-  credentials: true,
-}));
+// Simple CORS configuration for localhost
+app.use(cors());
 
-
-// ✅ API Routes
-app.use("/api/auth", authRoutes); // Make sure this is correct
-app.use("/api/posts",postRoutes); // Make sure this is correct  
+// Request logging middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
 
+// ✅ API Routes
+app.use("/api/auth", authRoutes); // Make sure this is correct
+app.use("/api/posts",postRoutes); // Make sure this is correct  
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: err.message || 'Internal Server Error' });
+});
 
 // ✅ Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("✅ HOGYA MANGUDIBBA");
-    app.listen(process.env.PORT || 5000, '0.0.0.0', () =>
+    console.log("✅ Connected to MongoDB");
+    app.listen(process.env.PORT || 5000, 'localhost', () =>
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
     );
   })
