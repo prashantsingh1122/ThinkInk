@@ -72,7 +72,7 @@ const CreatePost = () => {
             className="create-post-input"
             disabled={isLoading}
           />
-          <ReactQuill
+          <textarea
             theme="snow"
             placeholder="Content"
             value={content}
