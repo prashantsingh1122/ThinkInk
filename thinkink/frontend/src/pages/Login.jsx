@@ -7,24 +7,10 @@ import Particles from "./Lightning";
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const[loading, setLoading] = useState(false);
-
-
-  const handleLogin = async (e) => {
-    setLoading(true);
-    try{
-      await login(userData);
-        // success actions
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-    
 
   // Get the redirect path from location state, or default to dashboard
   const from = location.state?.from?.pathname || "/dashboard";
@@ -36,6 +22,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
       const res = await login(formData);
@@ -51,6 +38,8 @@ export default function Login() {
     } catch (error) {
       console.error("Login Error:", error);
       setError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,13 +122,21 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-purple-600 text-white rounded-full font-medium hover:bg-purple-700 transition-all"
+            disabled={isLoading}
+            className="w-full py-3 bg-purple-600 text-white rounded-full font-medium hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            Sign In
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
-          <p>
-      {loading ? <p>Loading...</p> : <button onClick={handleLogin}>Login</button>}
-    </p>
 
           <p className="text-center text-gray-400 text-sm">
             Don't have an account?{" "}
