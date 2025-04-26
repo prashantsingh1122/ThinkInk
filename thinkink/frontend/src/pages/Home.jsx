@@ -59,6 +59,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gray-900 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-serif font-bold mb-6">Start Your Writing Journey Today</h2>
+          <p className="text-lg text-gray-300 mb-10">
+            Join thousands of writers who have already found their voice on ThinkInk
+          </p>
+          <div className="flex gap-6 justify-center">
+            <Link to="/login">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-8 py-3 bg-white text-gray-900 font-medium rounded-full hover:bg-gray-100 transition duration-200"
+              >
+                Login
+              </motion.button>
+            </Link>
+            <Link to="/signup">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-8 py-3 bg-[#4f46e5] text-white font-medium rounded-full hover:bg-indigo-600 transition duration-200"
+              >
+                Sign Up Free
+              </motion.button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 px-4 bg-[#f6f1ff]">
         <div className="max-w-6xl mx-auto">
