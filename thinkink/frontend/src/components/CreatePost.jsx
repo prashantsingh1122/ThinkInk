@@ -6,6 +6,7 @@ const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { token } = useContext(AuthContext);
 
   const handleImageChange = (e) => {
@@ -14,9 +15,11 @@ const CreatePost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!title || !content) {
       alert("Title and content are required!");
+      setIsLoading(false);
       return;
     }
 
@@ -34,6 +37,10 @@ const CreatePost = () => {
       const res = await createPost(formData); // Send FormData to the API
       console.log("✅ Post created successfully:", res);
       alert("Post created successfully!");
+      // Clear form
+      setTitle("");
+      setContent("");
+      setImage(null);
     } catch (error) {
       console.error("🚨 Create Post Error:", error.message);
       if (error.response) {
@@ -43,7 +50,9 @@ const CreatePost = () => {
       if (error.request) {
         console.error("Request Data:", error.request);
       }
-      res.status(500).json({ error: error.message || "Internal Server Error" });
+      alert("Failed to create post. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -58,20 +67,39 @@ const CreatePost = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="create-post-input"
+            disabled={isLoading}
           />
           <textarea
             placeholder="Content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="create-post-textarea"
+            disabled={isLoading}
           />
           <input
             type="file"
             onChange={handleImageChange}
             accept="image/*"
             className="create-post-file-input"
+            disabled={isLoading}
           />
-          <button type="submit" className="create-post-button">Create Post</button>
+          <button 
+            type="submit" 
+            className="create-post-button"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating post...
+              </>
+            ) : (
+              "Create Post"
+            )}
+          </button>
         </form>
       </div>
       <style jsx>{`
@@ -143,6 +171,9 @@ const CreatePost = () => {
           transition: all 0.3s ease;
           text-transform: uppercase;
           letter-spacing: 1px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .create-post-button:hover {
@@ -152,6 +183,11 @@ const CreatePost = () => {
         
         .create-post-button:active {
           transform: translateY(0);
+        }
+
+        .create-post-button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
         }
       `}</style>
     </div>
