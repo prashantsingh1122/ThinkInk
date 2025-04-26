@@ -1,8 +1,10 @@
 import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
-
-
+// 🛡️ New Editor Imports
+import { RichTextEditor } from '@mantine/tiptap';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -10,6 +12,15 @@ const CreatePost = () => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useContext(AuthContext);
+
+  // Initialize Tiptap Editor
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content,
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+    },
+  });
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]); // Get the first file from the input
@@ -43,6 +54,7 @@ const CreatePost = () => {
       setTitle("");
       setContent("");
       setImage(null);
+      editor?.commands.setContent(''); // Reset the editor
     } catch (error) {
       console.error("🚨 Create Post Error:", error.message);
       if (error.response) {
@@ -71,14 +83,28 @@ const CreatePost = () => {
             className="create-post-input"
             disabled={isLoading}
           />
-          <textarea
-            theme="snow"
-            placeholder="Content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="create-post-textarea"
-            disabled={isLoading}
-          />
+
+          {/* 🖊️ Mantine Rich Text Editor */}
+          <RichTextEditor editor={editor} style={{ minHeight: 200 }}>
+            <RichTextEditor.Toolbar sticky stickyOffset={60}>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.Bold />
+                <RichTextEditor.Italic />
+                <RichTextEditor.Underline />
+                <RichTextEditor.Strikethrough />
+                <RichTextEditor.ClearFormatting />
+              </RichTextEditor.ControlsGroup>
+              <RichTextEditor.ControlsGroup>
+                <RichTextEditor.H1 />
+                <RichTextEditor.H2 />
+                <RichTextEditor.H3 />
+                <RichTextEditor.Blockquote />
+              </RichTextEditor.ControlsGroup>
+            </RichTextEditor.Toolbar>
+
+            <RichTextEditor.Content />
+          </RichTextEditor>
+
           <input
             type="file"
             onChange={handleImageChange}
@@ -86,6 +112,7 @@ const CreatePost = () => {
             className="create-post-file-input"
             disabled={isLoading}
           />
+          
           <button 
             type="submit" 
             className="create-post-button"
@@ -105,6 +132,7 @@ const CreatePost = () => {
           </button>
         </form>
       </div>
+
       <style jsx>{`
         .create-post-container {
           display: flex;
@@ -143,7 +171,6 @@ const CreatePost = () => {
         }
         
         .create-post-input,
-        .create-post-textarea,
         .create-post-file-input {
           padding: 1rem;
           border: 1px solid #ddd;
@@ -152,17 +179,15 @@ const CreatePost = () => {
           transition: border-color 0.3s ease;
         }
         
-        .create-post-input:focus,
-        .create-post-textarea:focus {
+        .create-post-input:focus {
           outline: none;
           border-color: #333;
         }
-        
-        .create-post-textarea {
-          min-height: 150px;
-          resize: vertical;
+
+        .create-post-file-input {
+          font-size: 0.875rem;
         }
-        
+
         .create-post-button {
           background: #000;
           color: white;
@@ -178,12 +203,12 @@ const CreatePost = () => {
           align-items: center;
           justify-content: center;
         }
-        
+
         .create-post-button:hover {
           background: #333;
           transform: translateY(-2px);
         }
-        
+
         .create-post-button:active {
           transform: translateY(0);
         }
