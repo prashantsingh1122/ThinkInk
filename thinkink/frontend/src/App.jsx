@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Blog from "./pages/Blog";
+import { MantineProvider } from '@mantine/core';
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
@@ -30,7 +31,8 @@ const Layout = ({ children }) => {
 };
 
 export default function App() {
-  return (
+  return ( 
+  <MantineProvider theme={{ colorScheme: 'light' }}>
     <Router>
       <AuthProvider>
         <Layout>
@@ -53,7 +55,9 @@ export default function App() {
               path="/create-post"
               element={
                 <ProtectedRoute>
+                  
                   <CreatePost />
+              
                 </ProtectedRoute>
               }
             />
@@ -85,5 +89,6 @@ export default function App() {
         </Layout>
       </AuthProvider>
     </Router>
+    </MantineProvider>
   );
 }
