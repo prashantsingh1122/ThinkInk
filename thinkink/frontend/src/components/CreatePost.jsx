@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
-import ReactQuill from 'react-quill';
 
 
 
