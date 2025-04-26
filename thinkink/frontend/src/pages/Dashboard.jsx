@@ -1,6 +1,6 @@
 import { useState, useEffect,useContext } from "react";
 import { getAllPosts } from "../services/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import AuthContext from '../context/AuthContext';
 
@@ -8,6 +8,7 @@ const Dashboard = () => {
   const { user, token } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -20,6 +21,13 @@ const Dashboard = () => {
     };
     fetchPosts();
   }, []);
+
+  const handleCreatePost = (e) => {
+    if (!token) {
+      e.preventDefault();
+      navigate('/login', { state: { from: '/create-post' } });
+    }
+  };
 
   return (
     <motion.div 
@@ -37,8 +45,8 @@ const Dashboard = () => {
               className="text-4xl font-bold text-gray-900 mb-2"
             >
               <p className="text-gray-600">
-            {user?.username ? `Hii, ${user.username}!` : 'Welcome back!'}
-          </p>
+                {user?.username ? `Hii, ${user.username}!` : 'Welcome to ThinkInk!'}
+              </p>
             </motion.h1>
             <motion.h2 
               initial={{ x: -20 }}
@@ -46,7 +54,7 @@ const Dashboard = () => {
               transition={{ delay: 0.1 }}
               className="text-xl text-gray-600"
             >
-              Welcome 
+              {user?.username ? 'Share your thoughts with the world!' : 'Join our community and start sharing!'}
             </motion.h2>
           </div>
           
@@ -57,7 +65,8 @@ const Dashboard = () => {
             transition={{ delay: 0.2 }}
           >
             <Link
-              to="/create-post"
+              to={token ? "/create-post" : "/login"}
+              onClick={handleCreatePost}
               className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <svg 
@@ -73,7 +82,7 @@ const Dashboard = () => {
                   d="M12 4v16m8-8H4" 
                 />
               </svg>
-              Create Post
+              {token ? "Create Post" : "Sign in to Create Post"}
             </Link>
           </motion.div>
         </div>
