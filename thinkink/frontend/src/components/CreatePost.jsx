@@ -2,7 +2,6 @@ import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
 
-
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -46,33 +45,116 @@ const CreatePost = () => {
       }
       res.status(500).json({ error: error.message || "Internal Server Error" });
     }
-
   };
 
   return (
-  <div>
-    
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <textarea
-        placeholder="Content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
-      <input
-        type="file"
-        onChange={handleImageChange}
-        accept="image/*"
-      />
-      <button type="submit">Create Post</button>
-    </form>
-  </div>
-   
+    <div className="create-post-container">
+      <div className="create-post-card">
+        <h2 className="create-post-title">Create New Post</h2>
+        <form onSubmit={handleSubmit} className="create-post-form">
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="create-post-input"
+          />
+          <textarea
+            placeholder="Content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="create-post-textarea"
+          />
+          <input
+            type="file"
+            onChange={handleImageChange}
+            accept="image/*"
+            className="create-post-file-input"
+          />
+          <button type="submit" className="create-post-button">Create Post</button>
+        </form>
+      </div>
+      <style jsx>{`
+        .create-post-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          padding: 2rem;
+        }
+        
+        .create-post-card {
+          width: 100%;
+          max-width: 800px;
+          background: white;
+          padding: 2.5rem;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .create-post-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .create-post-title {
+          font-size: 2rem;
+          margin-bottom: 1.5rem;
+          color: #333;
+          text-align: center;
+        }
+        
+        .create-post-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        
+        .create-post-input,
+        .create-post-textarea,
+        .create-post-file-input {
+          padding: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          font-size: 1rem;
+          transition: border-color 0.3s ease;
+        }
+        
+        .create-post-input:focus,
+        .create-post-textarea:focus {
+          outline: none;
+          border-color: #333;
+        }
+        
+        .create-post-textarea {
+          min-height: 150px;
+          resize: vertical;
+        }
+        
+        .create-post-button {
+          background: #000;
+          color: white;
+          padding: 1rem 2rem;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+        
+        .create-post-button:hover {
+          background: #333;
+          transform: translateY(-2px);
+        }
+        
+        .create-post-button:active {
+          transform: translateY(0);
+        }
+      `}</style>
+    </div>
   );
 };
 
