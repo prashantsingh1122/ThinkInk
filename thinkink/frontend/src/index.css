@@ -4,12 +4,16 @@
 
 nav {
     @apply bg-cyan-300 shadow-md p-4 flex justify-between items-center;
-  }
+}
   
-  nav a {
+nav a {
     @apply text-gray-800 hover:text-red-600;
-  }
+}
   
-  nav img {
+nav img {
     @apply w-10 h-10 rounded-full;
-  }
+}
+
+html {
+    scroll-behavior: smooth;
+}
