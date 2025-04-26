@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
+
+
+document.documentElement.style.scrollBehavior = 'smooth';
+
 export default function Home() {
   return (
     <div className="w-full overflow-x-hidden font-sans">

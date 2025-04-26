@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getUserPosts, deletePost } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
+document.documentElement.style.scrollBehavior = 'smooth';
+
 export default function Dashboard() {
   const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
@@ -48,7 +50,7 @@ export default function Dashboard() {
             >
               <div>
                 <h2
-                  className="text-xl font-semibold text-blue-600 cursor-pointer hover:underline"
+                  className="text-xl font-semibold text-blue-600 cursor-pointer hover:underline block transition-all duration-300 hover:opacity-90"
                   onClick={() => navigate(`/post/${post._id}`)}
                 >
                   {post.title}

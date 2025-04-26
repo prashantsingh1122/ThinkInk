@@ -61,7 +61,7 @@ const Navbar = () => {
                 to="/profile" smooth={true} duration={500}
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors relative group"
               >
-                console.log(alert("Are you sure"));
+                
                 Profile
                 <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full" />
               </Link>

@@ -1,8 +1,12 @@
 import { useState, useEffect,useContext } from "react";
 import { getAllPosts } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+
 import { motion } from "framer-motion";
 import AuthContext from '../context/AuthContext';
+
+// Add smooth scrolling behavior to the entire page
+document.documentElement.style.scrollBehavior = 'smooth';
 
 const Dashboard = () => {
   const { user, token } = useContext(AuthContext);
@@ -124,7 +128,10 @@ const Dashboard = () => {
             transition={{ type: "spring", stiffness: 300 }}
             className="relative overflow-hidden rounded-3xl shadow-xl bg-white group"
           >
-            <Link to={posts[0]?._id ? `/posts/${posts[0]._id}` : "#"}>
+            <Link 
+              to={posts[0]?._id ? `/posts/${posts[0]._id}` : "#"}
+              className="block transition-all duration-300 hover:opacity-90"
+            >
               <img
                 src={posts[0]?.image || "/placeholder.jpg"}
                 alt="Featured"
@@ -181,7 +188,7 @@ const Dashboard = () => {
                     <img
                       src={post.image || "/placeholder.jpg"}
                       alt={post.title}
-                      className="w-full h-56 object-cover"
+                      className="w-full h-56 object-cover transition-transform duration-300 hover:scale-105"
                     />
                     <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm text-gray-900 font-medium">
                       3 min read
