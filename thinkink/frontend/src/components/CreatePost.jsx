@@ -2,12 +2,8 @@ import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Import styles
 
-let ReactQuill;
-if (typeof window !== 'undefined') {
-  ReactQuill = require('react-quill');
-}
+
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
