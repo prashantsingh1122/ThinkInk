@@ -1,18 +1,20 @@
+import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Blog from "./pages/Blog";
 import { MantineProvider } from '@mantine/core';
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Navbar from "./components/Navbar";
-import CreatePost from "./components/CreatePost";
 import { AuthProvider } from "./context/AuthContext";
-import PostDetail from "./pages/PostDetail";
-import EditPost from "./pages/EditPost";
-import Profile from "./pages/Profile"; // Assuming you have a Profile component
 
+// Lazy loading components
+const Home = React.lazy(() => import("./pages/Home"));
+const Login = React.lazy(() => import("./pages/Login"));
+const Signup = React.lazy(() => import("./pages/Signup"));
+const Blog = React.lazy(() => import("./pages/Blog"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const Navbar = React.lazy(() => import("./components/Navbar"));
+const CreatePost = React.lazy(() => import("./components/CreatePost"));
+const PostDetail = React.lazy(() => import("./pages/PostDetail"));
+const EditPost = React.lazy(() => import("./pages/EditPost"));
+const Profile = React.lazy(() => import("./pages/Profile"));
+const ProtectedRoute = React.lazy(() => import("./components/ProtectedRoute"));
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -31,64 +33,64 @@ const Layout = ({ children }) => {
 };
 
 export default function App() {
-  return ( 
-  <MantineProvider theme={{ colorScheme: 'light' }}>
-    <Router>
-      <AuthProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/blog/:id" element={<Blog />} />
+  return (
+    <MantineProvider theme={{ colorScheme: 'light' }}>
+      <Router>
+        <AuthProvider>
+          <Layout>
+            <Suspense fallback={<Loader variant="dots" />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/blog/:id" element={<Blog />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/create-post"
-              element={
-                <ProtectedRoute>
-                  
-                  <CreatePost />
-              
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/posts/:id"
-              element={
-                <ProtectedRoute>
-                  <PostDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/posts/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <EditPost />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Layout>
-      </AuthProvider>
-    </Router>
+                {/* Protected Routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/create-post"
+                  element={
+                    <ProtectedRoute>
+                      <CreatePost />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/posts/:id"
+                  element={
+                    <ProtectedRoute>
+                      <PostDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/posts/:id/edit"
+                  element={
+                    <ProtectedRoute>
+                      <EditPost />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </Suspense>
+          </Layout>
+        </AuthProvider>
+      </Router>
     </MantineProvider>
   );
 }
