@@ -1,92 +1,7 @@
 import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
-import styled from "styled-components";
 
-const Card = styled.div`
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const Title = styled.h2`
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: #333;
-  text-align: center;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const Input = styled.input`
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #333;
-  }
-`;
-
-const TextArea = styled.textarea`
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  min-height: 150px;
-  resize: vertical;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #333;
-  }
-`;
-
-const FileInput = styled.input`
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-`;
-
-const Button = styled.button`
-  background: #000;
-  color: white;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-
-  &:hover {
-    background: #333;
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -95,7 +10,7 @@ const CreatePost = () => {
   const { token } = useContext(AuthContext);
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    setImage(e.target.files[0]); // Get the first file from the input
   };
 
   const handleSubmit = async (e) => {
@@ -106,16 +21,18 @@ const CreatePost = () => {
       return;
     }
 
+    // ✅ Create FormData to send the image file
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
 
     if (image) {
-      formData.append("image", image);
+      console.log("Image to be uploaded:", image); // Log the image file
+      formData.append("image", image); // Attach image if present
     }
 
     try {
-      const res = await createPost(formData);
+      const res = await createPost(formData); // Send FormData to the API
       console.log("✅ Post created successfully:", res);
       alert("Post created successfully!");
     } catch (error) {
@@ -127,32 +44,35 @@ const CreatePost = () => {
       if (error.request) {
         console.error("Request Data:", error.request);
       }
+      res.status(500).json({ error: error.message || "Internal Server Error" });
     }
+
   };
 
   return (
-    <Card>
-      <Title>Create New Post</Title>
-      <Form onSubmit={handleSubmit}>
-        <Input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <TextArea
-          placeholder="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <FileInput
-          type="file"
-          onChange={handleImageChange}
-          accept="image/*"
-        />
-        <Button type="submit">Create Post</Button>
-      </Form>
-    </Card>
+  <div>
+    
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <textarea
+        placeholder="Content"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+      />
+      <input
+        type="file"
+        onChange={handleImageChange}
+        accept="image/*"
+      />
+      <button type="submit">Create Post</button>
+    </form>
+  </div>
+   
   );
 };
 
