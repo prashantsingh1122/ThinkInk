@@ -16,7 +16,7 @@ app.use(express.json()); // ✅ Enable JSON parsing
 // Configure CORS for specific frontend URL (Vercel URL)
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://thinkinkblog1122-4tv9akrzu-itsshivam135-gmailcoms-projects.vercel.app'
+  'https://think-ink-jet.vercel.app'
 ];
 
 app.use(cors({
