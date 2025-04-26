@@ -1,6 +1,9 @@
 import { useState, useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import { createPost } from "../services/api";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import styles
+
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -69,7 +72,8 @@ const CreatePost = () => {
             className="create-post-input"
             disabled={isLoading}
           />
-          <textarea
+          <ReactQuill
+            theme="snow"
             placeholder="Content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
