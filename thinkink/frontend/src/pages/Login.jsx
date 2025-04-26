@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate,  useLocation } from "react-router-dom";
 import { login } from "../services/api";
+import { Link } from 'react-scroll';
 import AuthContext from "../context/AuthContext";
 import Particles from "./Lightning";
 
@@ -47,7 +48,7 @@ export default function Login() {
     <div className="relative flex items-center justify-center min-h-screen bg-black overflow-hidden">
       {/* Home Link */}
       <Link 
-        to="/" 
+        to="/"  smooth={true} duration={500}
         className="absolute top-8 left-8 z-20 flex items-center space-x-2 text-white hover:text-purple-400 transition-colors"
       >
         <svg 
