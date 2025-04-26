@@ -58,7 +58,7 @@ const Navbar = () => {
           {user && (
             <div className="flex items-center space-x-6">
               <Link
-                to="/profile" smooth={true} duration={500}
+                to="/profile" 
                 className="text-sm font-medium text-gray-600 hover:text-black transition-colors relative group"
               >
                 
