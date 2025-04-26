@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-scroll";
+
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
