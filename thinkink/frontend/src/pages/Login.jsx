@@ -10,6 +10,21 @@ export default function Login() {
   const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const[loading, setLoading] = useState(false);
+
+
+  const handleLogin = async (e) => {
+    setLoading(true);
+    try{
+      await login(userData);
+        // success actions
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+    
 
   // Get the redirect path from location state, or default to dashboard
   const from = location.state?.from?.pathname || "/dashboard";
@@ -122,6 +137,9 @@ export default function Login() {
           >
             Sign In
           </button>
+          <p>
+      {loading ? <p>Loading...</p> : <button onClick={handleLogin}>Login</button>}
+    </p>
 
           <p className="text-center text-gray-400 text-sm">
             Don't have an account?{" "}
