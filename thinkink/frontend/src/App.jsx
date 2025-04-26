@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { MantineProvider } from '@mantine/core';
 import { AuthProvider } from "./context/AuthContext";
 
+//for dot variant loader
+import { Loader } from '@mantine/core';
+
+
 // Lazy loading components
 const Home = React.lazy(() => import("./pages/Home"));
 const Login = React.lazy(() => import("./pages/Login"));
