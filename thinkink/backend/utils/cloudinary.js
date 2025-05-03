@@ -21,6 +21,9 @@ const storage = new CloudinaryStorage({
     allowed_formats: ["jpeg", "png", "jpg"],
   },
 });
+const Post = ({ post }) => {
+
+}
 
 export const upload = multer({ storage });
 
@@ -28,18 +31,24 @@ export const upload = multer({ storage });
 export const uploadImageToCloudinary = async (fileBuffer) => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: "Blog_Images" },
-      (error, result) => {
-        if (error) {
-          console.error("🚨 Cloudinary Upload Error:", error.message);
-          reject(error);
-        } else {
-          console.log("✅ Image uploaded successfully:", result.secure_url);
-          resolve(result.secure_url);
-        }
-      }
-    );
+      {
+        folder: "Blog_Images",
+        transformation: [{ width: 1200, crop: "limit", quality: "auto", fetch_format: "auto" },
 
-    streamifier.createReadStream(fileBuffer).pipe(uploadStream);
-  });
+        ],
+      
+       },
+    (error, result) => {
+      if (error) {
+        console.error("🚨 Cloudinary Upload Error:", error.message);
+        reject(error);
+      } else {
+        console.log("✅ Image uploaded successfully:", result.secure_url);
+        resolve(result.secure_url);
+      }
+    }
+  );
+
+  streamifier.createReadStream(fileBuffer).pipe(uploadStream);
+});
 };
