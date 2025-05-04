@@ -73,9 +73,7 @@ export default function PostDetail() {
           <button onClick={toggleLike}>
             {post.likes.includes(userId) ? '❤️ Liked' : '🤍 Like'}
           </button>
-          <button onClick={toggleBookmark}>
-            {post.bookmarks.includes(userId) ? '🔖 Bookmarked' : '📄 Bookmark'}
-          </button>
+          
         </div>
 
         <div>
