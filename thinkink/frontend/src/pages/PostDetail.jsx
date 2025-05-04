@@ -14,6 +14,12 @@ export default function PostDetail() {
     setNewComment("");
     fetchPost(); // Refresh post
   };
+  const toggleLike = async () => {
+    const res = await axios.post(`/api/posts/${post._id}/like`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    fetchPost(); // refresh post data
+  };
 
 
   useEffect(() => {
@@ -63,6 +69,15 @@ export default function PostDetail() {
         <p className="text-lg text-slate-200 leading-relaxed text-center">
           {post.content}
         </p>
+        <div className="flex space-x-4">
+          <button onClick={toggleLike}>
+            {post.likes.includes(userId) ? '❤️ Liked' : '🤍 Like'}
+          </button>
+          <button onClick={toggleBookmark}>
+            {post.bookmarks.includes(userId) ? '🔖 Bookmarked' : '📄 Bookmark'}
+          </button>
+        </div>
+
         <div>
           {post.comments.map(c => (
             <div key={c._id}>

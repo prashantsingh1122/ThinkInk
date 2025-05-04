@@ -42,6 +42,24 @@ router.post("/:id/comments", protect, async(req, res) => {
   res.status(201).json({ message: "Comment added successfully" });
 });
 
+// routes/posts.js
+router.post('/:id/like', protect, async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  const userId = req.user._id;
+
+  if (!post) return res.status(404).json({ error: 'Post not found' });
+
+  const alreadyLiked = post.likes.includes(userId);
+  if (alreadyLiked) {
+    post.likes.pull(userId);
+  } else {
+    post.likes.push(userId);
+  }
+
+  await post.save();
+  res.json({ liked: !alreadyLiked });
+});
+
 // Delete a post (Protected)
 
 

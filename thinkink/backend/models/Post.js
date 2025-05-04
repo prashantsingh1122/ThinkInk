@@ -33,6 +33,7 @@ const PostSchema = new mongoose.Schema(
       default: null, // ✅ Default to null if no image is provided
     },
     comments:[commentSchema], // ✅ Embed the comment schema directly in the Post schema
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   
   { timestamps: true }
