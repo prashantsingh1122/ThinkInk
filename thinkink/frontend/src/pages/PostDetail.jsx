@@ -7,6 +7,15 @@ export default function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
 
+  const handleAddComment = async () => {
+    await axios.post(`/api/posts/${postId}/comments`, { text: newComment }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setNewComment("");
+    fetchPost(); // Refresh post
+  };
+
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -54,6 +63,14 @@ export default function PostDetail() {
         <p className="text-lg text-slate-200 leading-relaxed text-center">
           {post.content}
         </p>
+        <div>
+          {post.comments.map(c => (
+            <div key={c._id}>
+              <p><strong>{c.user.username}</strong>: {c.text}</p>
+            </div>
+          ))}
+        </div>
+
       </motion.div>
     </div>
   );

@@ -27,6 +27,21 @@ router.get("/:id", getPost);
 // Update a post (Protected)
 router.put('/:id', protect, updatePost);
 
+router.post("/:id/comments", protect, async(req, res) => {
+  const{text}=req.body;
+  const post=await Post.findById(req.params.id);
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  const comment = {
+    user: req.user._id,
+    text,
+  };
+  post.comments.push(comment);
+  await post.save();
+  res.status(201).json({ message: "Comment added successfully" });
+});
+
 // Delete a post (Protected)
 
 
