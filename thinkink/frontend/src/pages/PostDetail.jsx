@@ -1,34 +1,22 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getPost } from "../services/api";
 import { motion } from "framer-motion";
+import AuthContext from "../context/AuthContext";
+import axios from "axios";
 
 export default function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
 
-  const handleAddComment = async () => {
-    await axios.post(`/api/posts/${postId}/comments`, { text: newComment }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setNewComment("");
-    fetchPost(); // Refresh post
-  };
-  const toggleLike = async () => {
-    const res = await axios.post(`/api/posts/${post._id}/like`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    fetchPost(); // refresh post data
-  };
-
+  const { user, token } = useContext(AuthContext);
+  const userId = user?._id;
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const cleanId = id.trim();
-        console.log("Fetching post with ID:", cleanId);
         const res = await getPost(cleanId);
-        console.log("Post fetched:", res.data);
         setPost(res.data);
       } catch (err) {
         console.error("Failed to fetch post:", err);
@@ -39,6 +27,22 @@ export default function PostDetail() {
       fetchPost();
     }
   }, [id]);
+
+  const toggleLike = async () => {
+    try {
+      await axios.post(
+        `/api/posts/${post._id}/like`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const updatedPost = await getPost(post._id);
+      setPost(updatedPost.data);
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
 
   if (!post) {
     return (
@@ -69,21 +73,18 @@ export default function PostDetail() {
         <p className="text-lg text-slate-200 leading-relaxed text-center">
           {post.content}
         </p>
-        <div className="flex space-x-4">
-          <button onClick={toggleLike}>
-            {post.likes.includes(userId) ? '❤️ Liked' : '🤍 Like'}
+
+        <div className="flex flex-col items-center mt-6 space-y-2">
+          <button
+            onClick={toggleLike}
+            className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition"
+          >
+            {post.likes.includes(userId) ? "❤️ Liked" : "🤍 Like"}
           </button>
-          
+          <p className="text-sm text-slate-300">
+            {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
+          </p>
         </div>
-
-        <div>
-          {post.comments.map(c => (
-            <div key={c._id}>
-              <p><strong>{c.user.username}</strong>: {c.text}</p>
-            </div>
-          ))}
-        </div>
-
       </motion.div>
     </div>
   );

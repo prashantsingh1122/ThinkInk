@@ -9,6 +9,7 @@ import {
 } from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
+import Post from "../models/Post.js"; 
 
 const router = express.Router();
 
@@ -44,21 +45,27 @@ router.post("/:id/comments", protect, async(req, res) => {
 
 // routes/posts.js
 router.post('/:id/like', protect, async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  const userId = req.user._id;
+  try {
+    const post = await Post.findById(req.params.id);
+    const userId = req.user._id;
 
-  if (!post) return res.status(404).json({ error: 'Post not found' });
+    if (!post) return res.status(404).json({ error: 'Post not found' });
 
-  const alreadyLiked = post.likes.includes(userId);
-  if (alreadyLiked) {
-    post.likes.pull(userId);
-  } else {
-    post.likes.push(userId);
+    const alreadyLiked = post.likes.includes(userId);
+    if (alreadyLiked) {
+      post.likes.pull(userId);
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+    res.status(200).json(post); // return updated post
+  } catch (err) {
+    console.error('Error toggling like:', err);
+    res.status(500).json({ error: 'Server error' });
   }
-
-  await post.save();
-  res.json({ liked: !alreadyLiked });
 });
+
 
 // Delete a post (Protected)
 
