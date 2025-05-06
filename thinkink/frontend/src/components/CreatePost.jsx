@@ -92,7 +92,7 @@ const CreatePost = () => {
 
   //GENERATIVE AI  
   const handleGenerate = async () => {
-    if (!aiPrompt) return alert("Please enter a prompt for AI.");
+    if (!aiPrompt) return alert("Write a blog post on [your topic] that outlines key actionable insights, tips, or takeaways rather than a summary. The content should be structured with clear subheadings and bullet points, written in a helpful, engaging tone. Avoid fluff — focus on delivering real value the reader can apply.");
     setAiLoading(true);
     try {
       const generated = await generateAIContent(aiPrompt);
