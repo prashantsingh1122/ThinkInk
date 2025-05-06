@@ -5,12 +5,16 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js"; // ✅ Ensure this is imported
 import connectDB from "./config/db.js"; // ✅ Ensure this is imported 
 import postRoutes from "./routes/posts.js"; // ✅ Ensure this is imported
+import aiRoutes from "./routes/ai.js";
 
 dotenv.config();
 connectDB();
 
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
+
+//ROUTS
+app.use('/api/ai', aiRoutes); // ✅ this will make the full path '/api/ai/generate'
 
 // Simple CORS configuration for localhost
 // Configure CORS for specific frontend URL (Vercel URL)

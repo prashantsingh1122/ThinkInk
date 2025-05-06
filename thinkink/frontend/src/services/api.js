@@ -130,5 +130,32 @@ export const deletePost = async (postId) => {
   });
   return response.data;
 };
+
+export const generateAIContent = async (prompt) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No auth token found, please login again.");
+
+    const response = await axios.post(
+      `${config.apiUrl}/ai/generate`,
+      { prompt },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.data) {
+      throw new Error('Failed to generate content');
+    }
+
+    return response.data.content;
+  } catch (error) {
+    console.error('Error generating AI content:', error);
+    throw error;
+  }
+};
   
   
