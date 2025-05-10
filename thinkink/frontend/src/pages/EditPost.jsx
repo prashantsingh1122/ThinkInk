@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../context/AuthContext";
+document.documentElement.style.scrollBehavior = 'smooth';
 
 export default function PostEdit() {
   const { id } = useParams();
