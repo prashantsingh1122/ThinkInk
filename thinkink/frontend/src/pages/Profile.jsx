@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { getUserPosts } from '../services/api';
 import AuthContext from '../context/AuthContext';
 import { motion } from 'framer-motion';
@@ -9,7 +9,7 @@ const Profile = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const fetchUserPosts = async () => {
