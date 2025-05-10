@@ -1,214 +1,132 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-
-
+import { FaPenFancy, FaCloudUploadAlt, FaUserShield, FaHeart, FaComments, FaBookmark, FaSearch, FaRobot, FaEdit, FaUserCircle, FaRocket } from "react-icons/fa";
 
 document.documentElement.style.scrollBehavior = 'smooth';
 
 export default function Home() {
-  return (
-    <div className="w-full overflow-x-hidden font-sans">
-      {/* Hero Section */}
-      <section className="relative min-h-screen w-full bg-[#fdf6f0] flex flex-col items-center justify-center text-center px-4 py-20">
-        <nav className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold">ThinkInk</Link>
-          <div className="flex gap-8">
-            <Link to="/about" className="hover:text-gray-600">About</Link>
-            <Link to="/features" className="hover:text-gray-600">Features</Link>
-            <Link to="/blogs" className="hover:text-gray-600">Blogs</Link>
-            <Link to="/contact" className="hover:text-gray-600">Contact</Link>
-          </div>
-        </nav>
+  const features = [
+    {
+      icon: <FaPenFancy className="w-8 h-8" />,
+      title: "Create & Publish Posts",
+      description: "Express yourself with our powerful rich text editor. Format your content, add media, and publish your thoughts instantly to reach your audience."
+    },
+    {
+      icon: <FaCloudUploadAlt className="w-8 h-8" />,
+      title: "Seamless Image Uploads",
+      description: "Enhance your posts with high-quality images. Our Cloudinary integration ensures fast, reliable, and secure image hosting with automatic optimization."
+    },
+    {
+      icon: <FaUserShield className="w-8 h-8" />,
+      title: "Enterprise-Grade Security",
+      description: "Your data is protected with industry-standard JWT authentication, secure password hashing, and encrypted sessions. Your privacy is our priority."
+    },
+    {
+      icon: <FaHeart className="w-8 h-8" />,
+      title: "Interactive Like System",
+      description: "Build engagement with our intuitive like system. Show appreciation for posts you love and track your most popular content in real-time."
+    },
+    {
+      icon: <FaComments className="w-8 h-8" />,
+      title: "Rich Commenting System",
+      description: "Foster meaningful discussions with our threaded commenting system. Reply to comments, mention users, and build a vibrant community around your content."
+    },
+    {
+      icon: <FaBookmark className="w-8 h-8" />,
+      title: "Smart Bookmarking",
+      description: "Never lose track of your favorite content. Save posts to your personal collection, organize them with tags, and access them anytime, anywhere."
+    },
+    {
+      icon: <FaSearch className="w-8 h-8" />,
+      title: "Advanced Search",
+      description: "Find exactly what you're looking for with our powerful search engine. Filter by title, content, author, or tags to discover relevant posts instantly."
+    },
+    {
+      icon: <FaRobot className="w-8 h-8" />,
+      title: "AI-Powered Assistance",
+      description: "Leverage cutting-edge AI to enhance your writing. Generate content summaries, create outlines, and get smart suggestions to improve your posts."
+    },
+    {
+      icon: <FaEdit className="w-8 h-8" />,
+      title: "Comprehensive Post Management",
+      description: "Take full control of your content. Edit, update, or remove your posts with our intuitive management tools. Track post performance and engagement metrics."
+    },
+    {
+      icon: <FaUserCircle className="w-8 h-8" />,
+      title: "Personalized Dashboard",
+      description: "Get a bird's-eye view of your blogging journey. Monitor your posts, track engagement, manage comments, and access all your content in one place."
+    }
+  ];
 
-        <div className="max-w-6xl mx-auto">
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center px-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/20 to-gray-900"></div>
+        <div className="relative z-10 max-w-6xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-6"
+            className="space-y-8"
           >
-            <h1 className="text-7xl md:text-8xl font-serif font-bold text-gray-800 tracking-tight">
-              The strategy of
-              <span className="block italic"> modern blogging</span>
+            <h1 className="text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
+              ThinkInk
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              ThinkInk® 2024 - Where thoughts transform into impactful stories
+            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+              Welcome to ThinkInk, where your ideas come to life. Our modern MERN-powered platform combines powerful technology with elegant design to create the perfect space for writers, developers, and content creators. Share your stories, connect with like-minded individuals, and build your digital presence with our comprehensive suite of blogging tools.
             </p>
+            <div className="flex gap-6 justify-center">
+              <Link to="/signup">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-3 bg-indigo-600 text-white rounded-full font-medium hover:bg-indigo-700 transition-colors"
+                >
+                  Start Writing Now
+                </motion.button>
+              </Link>
+              <Link to="/login">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-3 bg-gray-800 text-white rounded-full font-medium hover:bg-gray-700 transition-colors"
+                >
+                  Sign In
+                </motion.button>
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl font-serif font-bold mb-6">Discover Modern Writing Experience</h2>
-              <p className="text-gray-600 text-lg">
-                ThinkInk is more than just a blogging platform. It's a creative sanctuary where ideas flourish and stories come to life. Our platform combines elegant design with powerful writing tools to help you create content that matters.
-              </p>
-            </motion.div>
-          </div>
-          <div className="rounded-2xl overflow-hidden">
-            <img 
-              src="/images/writing-experience.jpg" 
-              alt="Modern Writing Experience" 
-              className="w-full h-[500px] object-cover"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gray-900 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-serif font-bold mb-6">Start Your Writing Journey Today</h2>
-          <p className="text-lg text-gray-300 mb-10">
-            Join thousands of writers who have already found their voice on ThinkInk
-          </p>
-          <div className="flex gap-6 justify-center">
-            <Link to="/login">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3 bg-white text-gray-900 font-medium rounded-full hover:bg-gray-100 transition duration-200"
-              >
-                Login
-              </motion.button>
-            </Link>
-            <Link to="/signup">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3 bg-[#4f46e5] text-white font-medium rounded-full hover:bg-indigo-600 transition duration-200"
-              >
-                Sign Up Free
-              </motion.button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
-      <section className="py-20 px-4 bg-[#f6f1ff]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-serif font-bold text-center mb-16">Why Choose ThinkInk</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Rich Text Editor",
-                description: "Advanced editing tools with markdown support and real-time preview"
-              },
-              {
-                title: "AI-Powered Insights",
-                description: "Get smart suggestions and analytics to improve your writing"
-              },
-              
-            ].map((feature, index) => (
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16 space-y-4"
+          >
+            <h2 className="text-4xl font-bold">Everything You Need to Succeed</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              ThinkInk provides a comprehensive suite of features designed to elevate your blogging experience. From content creation to community engagement, we've got you covered.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white p-8 rounded-2xl shadow-sm"
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                className="p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-indigo-500 transition-colors"
               >
-                <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-serif font-bold text-center mb-16">What Writers Say</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: "ThinkInk transformed how I connect with my audience. The tools are intuitive and powerful.",
-                author: "Sarah Chen",
-                role: "Tech Blogger"
-              },
-              {
-                quote: "The AI-powered insights have helped me improve my writing significantly. Highly recommended!",
-                author: "Marcus Rodriguez",
-                role: "Travel Writer"
-              },
-              {
-                quote: "Finally, a platform that understands what modern writers need. The community is amazing!",
-                author: "Emma Thompson",
-                role: "Lifestyle Blogger"
-              }
-            ].map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-[#fdf6f0] p-8 rounded-2xl"
-              >
-                <p className="text-gray-700 mb-6 italic">"{testimonial.quote}"</p>
-                <div>
-                  <p className="font-bold">{testimonial.author}</p>
-                  <p className="text-gray-600">{testimonial.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Blogs Section */}
-      <section className="py-20 px-4 bg-[#f6f1ff]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-serif font-bold text-center mb-16">Featured Stories</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "The Future of AI in Content Creation",
-                excerpt: "Exploring how artificial intelligence is reshaping the landscape of content creation...",
-                author: "David Park",
-                readTime: "5 min read",
-                category: "Technology"
-              },
-              {
-                title: "Sustainable Living in 2024",
-                excerpt: "A comprehensive guide to adopting eco-friendly practices in your daily life...",
-                author: "Lisa Green",
-                readTime: "7 min read",
-                category: "Lifestyle"
-              },
-              {
-                title: "Remote Work Culture",
-                excerpt: "Building strong team connections in a distributed workplace environment...",
-                author: "James Wilson",
-                readTime: "6 min read",
-                category: "Business"
-              }
-            ].map((blog, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm"
-              >
-                <div className="h-48 bg-gray-200"></div>
-                <div className="p-6">
-                  <span className="text-sm text-indigo-600 font-medium">{blog.category}</span>
-                  <h3 className="text-xl font-bold mt-2 mb-3">{blog.title}</h3>
-                  <p className="text-gray-600 mb-4">{blog.excerpt}</p>
-                  <div className="flex justify-between items-center text-sm text-gray-500">
-                    <span>{blog.author}</span>
-                    <span>{blog.readTime}</span>
-                  </div>
-                </div>
+                <div className="text-indigo-400 mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-gray-400">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -216,43 +134,45 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gray-900 text-white">
+      <section className="py-20 px-4 bg-gray-800">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-serif font-bold mb-6">Start Your Writing Journey Today</h2>
-          <p className="text-lg text-gray-300 mb-10">
-            Join thousands of writers who have already found their voice on ThinkInk
-          </p>
-          <div className="flex gap-6 justify-center">
-            <Link to="/login">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3 bg-white text-gray-900 font-medium rounded-full hover:bg-gray-100 transition duration-200"
-              >
-                Login
-              </motion.button>
-            </Link>
-            <Link to="/signup">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3 bg-[#4f46e5] text-white font-medium rounded-full hover:bg-indigo-600 transition duration-200"
-              >
-                Sign Up Free
-              </motion.button>
-            </Link>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <h2 className="text-4xl font-bold">Begin Your Writing Journey Today</h2>
+            <p className="text-xl text-gray-300">
+              Join our growing community of writers and content creators. Share your stories, connect with readers, and make your mark in the digital world. With ThinkInk, your voice matters.
+            </p>
+            <div className="flex gap-6 justify-center">
+              <Link to="/signup">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-3 bg-indigo-600 text-white rounded-full font-medium hover:bg-indigo-700 transition-colors"
+                >
+                  Create Your Account
+                </motion.button>
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-10 px-4 bg-gray-50">
+      <footer className="py-10 px-4 bg-gray-900 border-t border-gray-800">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-600">© 2024 ThinkInk. All rights reserved.</p>
+          <div className="flex items-center gap-2">
+            <FaRocket className="text-indigo-400" />
+            <span className="text-xl font-bold">ThinkInk</span>
+          </div>
+          <p className="text-gray-400 mt-4 md:mt-0">© 2024 ThinkInk. All rights reserved.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <Link to="/privacy" className="text-gray-600 hover:text-gray-900">Privacy</Link>
-            <Link to="/terms" className="text-gray-600 hover:text-gray-900">Terms</Link>
-            <Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
+            <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
+            <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact Us</Link>
           </div>
         </div>
       </footer>

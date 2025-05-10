@@ -3,11 +3,15 @@ import { useEffect, useState, useContext } from "react";
 import { getPost } from "../services/api";
 import { motion } from "framer-motion";
 import AuthContext from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 
 export default function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const navigate = useNavigate();
+
 
   const { user, token } = useContext(AuthContext);
   const userId = user?._id;
@@ -52,6 +56,25 @@ export default function PostDetail() {
     );
   }
 
+  // Delete Post
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) return;
+
+    try {
+      console.log("Deleting post with ID:", post._id);
+      const res = await axios.delete(`/api/posts/${post._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("Delete response:", res.data);
+      alert("✅ Post deleted successfully.");
+      navigate("/dashboard"); // redirect to home
+    } catch (err) {
+      console.error("Failed to delete post:", err);
+      alert("❌ Failed to delete post.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-12 text-white flex items-center justify-center">
       <motion.div
@@ -85,6 +108,25 @@ export default function PostDetail() {
             {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
           </p>
         </div>
+        {userId === post.author && (
+          <div className="flex space-x-4 mt-4">
+            <button
+              onClick={() => navigate(`/posts/${post._id}/edit`)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              ✏️ Edit Post
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            >
+              🗑️ Delete Post
+            </button>
+          </div>
+        )}
+
+
       </motion.div>
     </div>
   );

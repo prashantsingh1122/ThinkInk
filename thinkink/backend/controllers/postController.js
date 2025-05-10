@@ -43,19 +43,33 @@ export const createPost = async (req, res) => {
 
 
 // Get all posts
+// Get all posts with optional search by title or tags
 export const getPosts = async (req, res) => {
   try {
-    console.log("Fetching all posts...");
-    const posts = await Post.find()
-      .populate("author", "username email")  // Populate author details
-      .sort({ createdAt: -1 });  // Sort by latest
-    console.log("Posts fetched successfully:", posts);
-    res.json(posts);
+    const { search } = req.query;
+
+    // Build dynamic query
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { tags: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const posts = await Post.find(query)
+      .populate("author", "username email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
   } catch (error) {
-    console.error("Get Posts Error:", error);
-    res.status(500).json({ error: "Failing to get post" });
+    console.error("🔍 Search Error:", error);
+    res.status(500).json({ error: "Failed to retrieve posts" });
   }
 };
+
 
 // ✅ Get a single post
 // Make sure this is imported
@@ -89,7 +103,7 @@ export const getPost = async (req, res) => {
 // ✅ PUT /api/posts/:id
 export const updatePost = async (req, res) => {
   const postId = req.params.id;
-  const userId = req.userId; // assuming your auth middleware sets req.userId
+  const userId = req.user._id; // ✅ use req.user._id
 
   try {
     const post = await Post.findById(postId);
@@ -98,11 +112,10 @@ export const updatePost = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    if (post.author.toString() !== userId) {
+    if (post.author.toString() !== userId.toString()) {
       return res.status(403).json({ error: "Unauthorized to edit this post" });
     }
 
-    // Update post fields
     const { title, content, image } = req.body;
     post.title = title || post.title;
     post.content = content || post.content;
@@ -115,6 +128,7 @@ export const updatePost = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Get posts created by logged-in user
 export const getUserPosts = async (req, res) => {

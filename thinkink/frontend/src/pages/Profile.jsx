@@ -19,7 +19,7 @@ const Profile = () => {
         setPosts(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to fetch user posts:", err);
-        setError("Failed to load your posts. Please try again later.");
+        setError("It seems you haven't created any post.");
       } finally {
         setLoading(false);
       }
