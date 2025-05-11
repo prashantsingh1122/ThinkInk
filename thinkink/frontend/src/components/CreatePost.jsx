@@ -219,7 +219,7 @@ const CreatePost = () => {
         </div>
 
         <div className="ai-feature-card">
-          <h4 className="ai-feature-title">USE AI FOR SUGGESTION</h4>
+          <h4 className="ai-feature-title">AI Content Assistant</h4>
           <div className="ai-feature-form">
             <div className="mb-4">
               <label className="block mb-1 font-medium">AI Prompt</label>
@@ -243,10 +243,10 @@ const CreatePost = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  WAIT A MIN BIATCH
+                  Generating...
                 </>
               ) : (
-                "Generate AI Content"
+                "Generate Content"
               )}
             </button>
 
@@ -271,50 +271,55 @@ const CreatePost = () => {
           justify-content: center;
           align-items: flex-start;
           min-height: 100vh;
-          padding: 1rem;
-          background-color: #f5f5f5;
+          padding: 2rem;
+          background-color: #f8f9fa;
+          color: #333333;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
         }
         
         .create-post-layout {
           display: flex;
-          gap: 1rem;
+          gap: 2rem;
           width: 100%;
           max-width: 1800px;
           margin: 0 auto;
+          padding-top: 80px;
+          scroll-behavior: smooth;
         }
         
         .create-post-card {
           flex: 1;
-          background: white;
+          background: #ffffff;
           padding: 2rem;
           border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          min-height: calc(100vh - 2rem);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          transition: all 0.3s ease;
+          min-height: calc(100vh - 100px);
           display: flex;
           flex-direction: column;
+          overflow-y: auto;
+          scroll-behavior: smooth;
         }
         
         .ai-feature-card {
           flex: 1;
-          background: white;
+          background: #ffffff;
           padding: 2rem;
           border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          min-height: calc(100vh - 2rem);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          min-height: calc(100vh - 100px);
           display: flex;
           flex-direction: column;
-          border: 2px solid transparent;
-          background-image: linear-gradient(white, white), 
-                          linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          background-origin: border-box;
-          background-clip: padding-box, border-box;
+          border: 1px solid #e9ecef;
+          overflow-y: auto;
+          scroll-behavior: smooth;
         }
         
         .create-post-title {
           font-size: 1.75rem;
           margin-bottom: 1.5rem;
-          color: #333;
+          color: #333333;
           text-align: center;
           font-weight: 600;
         }
@@ -322,22 +327,13 @@ const CreatePost = () => {
         .ai-feature-title {
           font-size: 1.75rem;
           margin-bottom: 1.5rem;
-          background: linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
+          color: #333333;
           text-align: center;
           font-weight: 600;
           letter-spacing: 0.5px;
         }
         
-        .create-post-form {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-          flex: 1;
-        }
-        
+        .create-post-form,
         .ai-feature-form {
           display: flex;
           flex-direction: column;
@@ -349,31 +345,32 @@ const CreatePost = () => {
         .ai-prompt-input {
           width: 100%;
           padding: 1rem;
-          border: 1px solid #ddd;
+          border: 1px solid #e9ecef;
           border-radius: 8px;
           font-size: 1rem;
-          transition: border-color 0.3s ease;
-          background: #fff;
+          transition: all 0.3s ease;
+          background: #ffffff;
+          color: #333333;
         }
         
         .create-post-input:focus,
         .ai-prompt-input:focus {
           outline: none;
-          border-color: #333;
-          box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+          border-color: #dee2e6;
+          box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
         }
 
         .create-post-file-input {
           font-size: 0.875rem;
           padding: 0.75rem;
-          border: 1px solid #ddd;
+          border: 1px solid #e9ecef;
           border-radius: 8px;
-          background: #fff;
+          background: #ffffff;
+          color: #333333;
         }
 
-        .create-post-button,
-        .generate-button {
-          background: #000;
+        .create-post-button {
+          background: #333333;
           color: white;
           padding: 1rem 2rem;
           border: none;
@@ -389,10 +386,32 @@ const CreatePost = () => {
           font-weight: 500;
         }
 
-        .create-post-button:hover,
-        .generate-button:hover {
-          background: #333;
+        .generate-button {
+          background: linear-gradient(45deg, #ff6b6b, #ff1493);
+          color: white;
+          padding: 1rem 2rem;
+          border: none;
+          border-radius: 8px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 500;
+        }
+
+        .create-post-button:hover {
+          background: #444444;
           transform: translateY(-2px);
+        }
+
+        .generate-button:hover {
+          background: linear-gradient(45deg, #ff1493, #ff6b6b);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
         }
 
         .create-post-button:active,
@@ -406,78 +425,15 @@ const CreatePost = () => {
           cursor: not-allowed;
         }
 
-        .ai-prompt-input {
-          width: 100%;
-          padding: 1rem;
-          border: 2px solid transparent;
-          border-radius: 8px;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-          background: white;
-          color: #333;
-          background-image: linear-gradient(white, white), 
-                          linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          background-origin: border-box;
-          background-clip: padding-box, border-box;
-        }
-
-        .ai-prompt-input:focus {
-          outline: none;
-          box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.2);
-        }
-
-        .ai-prompt-input::placeholder {
-          color: #9c27b0;
-          opacity: 0.7;
-        }
-
-        .generate-button {
-          background: linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          color: white;
-          padding: 1rem 2rem;
-          border: none;
-          border-radius: 8px;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 500;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .generate-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
-        }
-
-        .generate-button:active {
-          transform: translateY(0);
-        }
-
-        .generate-button:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-          background: linear-gradient(45deg, #ccc, #999, #ccc);
-        }
-
         .generated-content-preview {
           margin-top: 1.5rem;
-          border: 2px solid transparent;
+          border: 1px solid #e9ecef;
           border-radius: 8px;
           padding: 1rem;
-          background: white;
+          background: #ffffff;
           flex: 1;
           display: flex;
           flex-direction: column;
-          background-image: linear-gradient(white, white), 
-                          linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          background-origin: border-box;
-          background-clip: padding-box, border-box;
         }
 
         .preview-header {
@@ -486,25 +442,18 @@ const CreatePost = () => {
           align-items: center;
           margin-bottom: 1rem;
           padding-bottom: 0.5rem;
-          border-bottom: 2px solid transparent;
-          background-image: linear-gradient(white, white), 
-                          linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          background-origin: border-box;
-          background-clip: padding-box, border-box;
+          border-bottom: 1px solid #e9ecef;
         }
 
         .preview-header h4 {
           margin: 0;
-          background: linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
+          color: #333333;
           font-size: 1.1rem;
           font-weight: 500;
         }
 
         .copy-button {
-          background: linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
+          background: linear-gradient(45deg, #ff6b6b, #ff1493);
           color: white;
           padding: 0.5rem 1rem;
           border: none;
@@ -515,17 +464,18 @@ const CreatePost = () => {
         }
 
         .copy-button:hover {
+          background: linear-gradient(45deg, #ff1493, #ff6b6b);
           transform: translateY(-1px);
-          box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+          box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3);
         }
 
         .preview-content {
           flex: 1;
           overflow-y: auto;
           padding: 1rem;
-          background: white;
+          background: #ffffff;
           border-radius: 4px;
-          color: #333;
+          color: #333333;
         }
 
         .preview-content::-webkit-scrollbar {
@@ -533,44 +483,92 @@ const CreatePost = () => {
         }
 
         .preview-content::-webkit-scrollbar-track {
-          background: #f1f1f1;
+          background: #f8f9fa;
         }
 
         .preview-content::-webkit-scrollbar-thumb {
-          background: linear-gradient(45deg, #ff6b6b, #9c27b0, #ff1493);
+          background: #dee2e6;
           border-radius: 4px;
         }
 
         .preview-content::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(45deg, #ff1493, #9c27b0, #ff6b6b);
+          background: #ced4da;
         }
 
         .ProseMirror {
           min-height: 200px;
           padding: 1rem;
-          border: 1px solid #ddd;
+          border: 1px solid #e9ecef;
           border-radius: 8px;
           outline: none;
+          background: #ffffff;
+          color: #333333;
         }
 
         .ProseMirror p.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
           float: left;
-          color: #9c27b0;
+          color: #adb5bd;
           pointer-events: none;
           height: 0;
           font-style: italic;
-          opacity: 0.7;
         }
 
         .ProseMirror:focus {
-          border-color: #9c27b0;
-          box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.1);
+          border-color: #dee2e6;
+          box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Smooth scrollbar styling */
+        .create-post-card::-webkit-scrollbar,
+        .ai-feature-card::-webkit-scrollbar,
+        .preview-content::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+
+        .create-post-card::-webkit-scrollbar-track,
+        .ai-feature-card::-webkit-scrollbar-track,
+        .preview-content::-webkit-scrollbar-track {
+          background: #f8f9fa;
+          border-radius: 4px;
+        }
+
+        .create-post-card::-webkit-scrollbar-thumb,
+        .ai-feature-card::-webkit-scrollbar-thumb,
+        .preview-content::-webkit-scrollbar-thumb {
+          background: #dee2e6;
+          border-radius: 4px;
+          transition: background 0.3s ease;
+        }
+
+        .create-post-card::-webkit-scrollbar-thumb:hover,
+        .ai-feature-card::-webkit-scrollbar-thumb:hover,
+        .preview-content::-webkit-scrollbar-thumb:hover {
+          background: #ced4da;
+        }
+
+        /* Smooth transitions for all interactive elements */
+        .create-post-input,
+        .ai-prompt-input,
+        .create-post-file-input,
+        .create-post-button,
+        .generate-button,
+        .copy-button {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Smooth hover effects */
+        .create-post-card:hover,
+        .ai-feature-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 1024px) {
           .create-post-layout {
             flex-direction: column;
+            padding-top: 100px; /* Increase padding for mobile */
           }
           
           .create-post-card,
