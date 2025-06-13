@@ -126,7 +126,7 @@ export default function PostDetail() {
             </button>
           </div>
         )}
-
+        alert("Post loaded successfully!");
 
       </motion.div>
     </div>
