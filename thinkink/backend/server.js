@@ -16,7 +16,6 @@ app.use(express.json()); // ✅ Enable JSON parsing
 //ROUTS
 app.use('/api/ai', aiRoutes); // ✅ this will make the full path '/api/ai/generate'
 
-// Simple CORS configuration for localhost
 // Configure CORS for specific frontend URL (Vercel URL)
 const allowedOrigins = [
   'http://localhost:5173',
@@ -30,17 +29,21 @@ app.use(cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
+      console.log('Blocked by CORS:', origin);
       return callback(new Error('CORS policy violation'));
     }
   },
-  credentials: true, // If you're sending cookies or Authorization headers
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
+// Add pre-flight OPTIONS handler
+app.options('*', cors());
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
+  console.log(`${req.method} ${req.path} - Origin: ${req.headers.origin}`);
   next();
 });
 

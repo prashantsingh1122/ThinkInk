@@ -126,7 +126,7 @@ export default function PostDetail() {
             </button>
           </div>
         )}
-
+        console.log(alert("There may be some development errors as it is in development phase"));
 
       </motion.div>
     </div>
