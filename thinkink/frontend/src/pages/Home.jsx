@@ -1,10 +1,109 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { FaPenFancy, FaCloudUploadAlt, FaUserShield, FaHeart, FaComments, FaBookmark, FaSearch, FaRobot, FaEdit, FaUserCircle, FaRocket } from "react-icons/fa";
 
 document.documentElement.style.scrollBehavior = 'smooth';
 
 export default function Home() {
+  const splineRef = useRef(null);
+
+  useEffect(() => {
+    // Load Spline script
+    const loadSplineScript = () => {
+      if (!document.querySelector('script[src*="spline-viewer"]')) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = 'https://unpkg.com/@splinetool/viewer@1.10.22/build/spline-viewer.js';
+        script.onload = () => {
+          // Create spline-viewer element after script loads
+          if (splineRef.current) {
+            const splineViewer = document.createElement('spline-viewer');
+            splineViewer.setAttribute('url', 'https://prod.spline.design/W8hjIOo3glPvZ1fW/scene.splinecode');
+            splineViewer.style.width = '100%';
+            splineViewer.style.height = '100%';
+            splineViewer.style.background = 'transparent';
+            splineRef.current.appendChild(splineViewer);
+            
+            // Hide "Built with Spline" watermark
+            setTimeout(() => {
+              const watermark = splineViewer.shadowRoot?.querySelector('.spline-watermark');
+              if (watermark) {
+                watermark.style.display = 'none';
+                watermark.style.visibility = 'hidden';
+                watermark.style.opacity = '0';
+                watermark.style.position = 'absolute';
+                watermark.style.left = '-9999px';
+                watermark.style.top = '-9999px';
+              }
+              
+              // Also try to hide any other potential watermark elements
+              const allElements = splineViewer.shadowRoot?.querySelectorAll('*');
+              if (allElements) {
+                allElements.forEach(element => {
+                  if (element.textContent?.includes('Spline') || 
+                      element.className?.includes('watermark') ||
+                      element.id?.includes('watermark')) {
+                    element.style.display = 'none';
+                    element.style.visibility = 'hidden';
+                    element.style.opacity = '0';
+                  }
+                });
+              }
+            }, 1000);
+          }
+        };
+        document.head.appendChild(script);
+      } else {
+        // Script already exists, create viewer immediately
+        if (splineRef.current) {
+          const splineViewer = document.createElement('spline-viewer');
+          splineViewer.setAttribute('url', 'https://prod.spline.design/W8hjIOo3glPvZ1fW/scene.splinecode');
+          splineViewer.style.width = '100%';
+          splineViewer.style.height = '100%';
+          splineViewer.style.background = 'transparent';
+          splineRef.current.appendChild(splineViewer);
+          
+          // Hide "Built with Spline" watermark
+          setTimeout(() => {
+            const watermark = splineViewer.shadowRoot?.querySelector('.spline-watermark');
+            if (watermark) {
+              watermark.style.display = 'none';
+              watermark.style.visibility = 'hidden';
+              watermark.style.opacity = '0';
+              watermark.style.position = 'absolute';
+              watermark.style.left = '-9999px';
+              watermark.style.top = '-9999px';
+            }
+            
+            // Also try to hide any other potential watermark elements
+            const allElements = splineViewer.shadowRoot?.querySelectorAll('*');
+            if (allElements) {
+              allElements.forEach(element => {
+                if (element.textContent?.includes('Spline') || 
+                    element.className?.includes('watermark') ||
+                    element.id?.includes('watermark')) {
+                  element.style.display = 'none';
+                  element.style.visibility = 'hidden';
+                  element.style.opacity = '0';
+                }
+              });
+            }
+          }, 1000);
+        }
+      }
+    };
+
+    loadSplineScript();
+
+    // Cleanup function
+    return () => {
+      if (splineRef.current) {
+        splineRef.current.innerHTML = '';
+      }
+    };
+  }, []);
+
   const features = [
     {
       icon: <FaPenFancy className="w-8 h-8" />,
@@ -100,6 +199,33 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 3D Model Section */}
+      <section className="py-20 px-4 bg-gray-800">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12 space-y-4"
+          >
+            <h2 className="text-4xl font-bold">AI-Powered Content Writing</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Experience the future of content creation with our advanced AI-powered writing tools. Generate ideas, enhance your writing, and create compelling content that engages your audience like never before.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="flex justify-center"
+          >
+            <div className="w-full max-w-7xl h-[800px] rounded-xl overflow-hidden border border-gray-600 shadow-2xl relative" ref={splineRef}>
+              {/* Spline viewer will be dynamically added here */}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
@@ -132,6 +258,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gray-800">
