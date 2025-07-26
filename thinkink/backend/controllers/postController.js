@@ -1,193 +1,185 @@
-import Post from "../models/Post.js";
-import { uploadImageToCloudinary } from "../utils/cloudinary.js";
-import User from "../models/userModel.js";  // ✅ Import the User model
-import mongoose from "mongoose";
+import { useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { getPost } from "../services/api";
+import { motion } from "framer-motion";
+import AuthContext from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
+document.documentElement.style.scrollBehavior = 'smooth';
 
+export default function PostDetail() {
+  const { id } = useParams();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [likeLoading, setLikeLoading] = useState(false);
+  const navigate = useNavigate();
 
-// ✅ Import the Post model
+  const { user, token } = useContext(AuthContext);
+  const userId = user?._id;
 
-//Likes controller
-export const toggleLikePost = async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    const userId = req.user._id;
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        const cleanId = id.trim();
+        const res = await getPost(cleanId);
+        setPost(res.data);
+      } catch (err) {
+        console.error("Failed to fetch post:", err);
+        // You might want to show an error message to user
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (!post) return res.status(404).json({ error: 'Post not found' });
+    if (id) {
+      fetchPost();
+    }
+  }, [id]);
 
-    const alreadyLiked = post.likes.includes(userId);
-    if (alreadyLiked) {
-      post.likes.pull(userId);
-    } else {
-      post.likes.push(userId);
+  const toggleLike = async () => {
+    // Check if user is authenticated
+    if (!user || !token) {
+      alert("Please log in to like posts");
+      return;
     }
 
-    await post.save();
-    res.status(200).json(post); // return updated post
-  } catch (err) {
-    console.error('Error toggling like:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
+    if (likeLoading) return; // Prevent multiple clicks
 
+    try {
+      setLikeLoading(true);
+      
+      // Make the API call
+      const response = await axios.post(
+        `/api/posts/${post._id}/like`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-export const createPost = async (req, res) => {
-  try {
-    const { title, content } = req.body;
-    const userId = req.user.id;
-
-    if (!title || !content) {
-      return res.status(400).json({ error: "Title and content are required" });
+      // Update the post state with the response data
+      setPost(response.data);
+      
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      
+      // Show user-friendly error message
+      if (error.response?.status === 401) {
+        alert("Please log in to like posts");
+      } else {
+        alert("Failed to update like. Please try again.");
+      }
+    } finally {
+      setLikeLoading(false);
     }
+  };
 
-    let imageUrl = null;
+  // Delete Post
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) return;
 
-    // Check if an image file is present
-    if (req.file) {
-      console.log("📝 Image received:", req.file);
-      imageUrl = await uploadImageToCloudinary(req.file.buffer);
-      console.log("✅ Image uploaded successfully:", imageUrl);
-    }
-
-    const newPost = new Post({
-      title,
-      content,
-      image: imageUrl,
-      author: userId,
-    });
-
-    await newPost.save();
-    res.status(201).json(newPost);
-  } catch (error) {
-    console.error("🚨 Create Post Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-
-
-// Get all posts
-// Get all posts with optional search by title or tags
-export const getPosts = async (req, res) => {
-  try {
-    const { search } = req.query;
-
-    // Build dynamic query
-    let query = {};
-    if (search) {
-      query = {
-        $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { tags: { $regex: search, $options: 'i' } }
-        ]
-      };
-    }
-
-    const posts = await Post.find(query)
-      .populate("author", "username email")
-      .sort({ createdAt: -1 });
-
-    res.status(200).json(posts);
-  } catch (error) {
-    console.error("🔍 Search Error:", error);
-    res.status(500).json({ error: "Failed to retrieve posts" });
-  }
-};
-
-
-// ✅ Get a single post
-// Make sure this is imported
-
-
-export const getPost = async (req, res) => {
-  const { id } = req.params;
-
-  // Check if the id is a valid ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid post ID' });
-  }
-
-  try {
-    const post = await Post.findById(id); // Query the post by ID
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    res.status(200).json(post); // Send the post details
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-
-
-
-
-
-// ✅ Update a post
-// ✅ PUT /api/posts/:id
-export const updatePost = async (req, res) => {
-  const postId = req.params.id;
-  const userId = req.user._id; // ✅ use req.user._id
-
-  try {
-    const post = await Post.findById(postId);
-
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
-    if (post.author.toString() !== userId.toString()) {
-      return res.status(403).json({ error: "Unauthorized to edit this post" });
-    }
-
-    const { title, content, image } = req.body;
-    post.title = title || post.title;
-    post.content = content || post.content;
-    if (image) post.image = image;
-
-    const updatedPost = await post.save();
-    res.json(updatedPost);
-  } catch (err) {
-    console.error("❌ Error updating post:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-};
-
-
-// Get posts created by logged-in user
-export const getUserPosts = async (req, res) => {
-  try {
-    // Ensure user exists in request
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({
-        success: false,
-        message: 'User not authenticated'
+    try {
+      console.log("Deleting post with ID:", post._id);
+      const res = await axios.delete(`/api/posts/${post._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+      console.log("Delete response:", res.data);
+      alert("✅ Post deleted successfully.");
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Failed to delete post:", err);
+      alert("❌ Failed to delete post.");
     }
+  };
 
-    const userId = req.user._id;
-    console.log('Fetching posts for user:', userId);
-
-    const posts = await Post.find({ author: userId })
-      .sort({ createdAt: -1 })
-      .populate('author', 'username email');
-
-    console.log(`Found ${posts.length} posts for user ${userId}`);
-
-    return res.status(200).json({
-      success: true,
-      posts: posts
-    });
-  } catch (error) {
-    console.error('Error in getUserPosts:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to fetch user posts',
-      error: error.message
-    });
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-900 text-white text-xl">
+        Loading post...
+      </div>
+    );
   }
-};
 
+  if (!post) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-900 text-white text-xl">
+        Post not found
+      </div>
+    );
+  }
 
+  // Check if current user has liked the post
+  const isLiked = post.likes && userId && post.likes.includes(userId);
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-12 text-white flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="bg-slate-700 bg-opacity-40 backdrop-blur-lg rounded-xl shadow-2xl p-8 max-w-3xl w-full"
+      >
+        <h1 className="text-4xl font-bold text-pink-400 mb-4 text-center">
+          {post.title}
+        </h1>
+        
+        {post.image && (
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full rounded-lg shadow-md mb-6 object-cover max-h-[500px] transition duration-300 hover:scale-[1.01]"
+          />
+        )}
+        
+        <p className="text-lg text-slate-200 leading-relaxed text-center">
+          {post.content}
+        </p>
 
+        <div className="flex flex-col items-center mt-6 space-y-2">
+          <button
+            onClick={toggleLike}
+            disabled={likeLoading || !user}
+            className={`px-4 py-2 rounded-lg transition ${
+              likeLoading 
+                ? 'bg-gray-500 cursor-not-allowed' 
+                : 'bg-pink-500 hover:bg-pink-600'
+            } text-white ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {likeLoading ? (
+              "..."
+            ) : isLiked ? (
+              "❤️ Liked"
+            ) : (
+              "🤍 Like"
+            )}
+          </button>
+          
+          <p className="text-sm text-slate-300">
+            {post.likes?.length || 0} {(post.likes?.length || 0) === 1 ? "like" : "likes"}
+          </p>
+        </div>
+
+        {userId === post.author && (
+          <div className="flex space-x-4 mt-4 justify-center">
+            <button
+              onClick={() => navigate(`/posts/${post._id}/edit`)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+            >
+              ✏️ Edit Post
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+            >
+              🗑️ Delete Post
+            </button>
+          </div>
+        )}
+      </motion.div>
+    </div>
+  );
+}
