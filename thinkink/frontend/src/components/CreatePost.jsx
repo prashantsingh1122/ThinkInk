@@ -265,7 +265,7 @@ const CreatePost = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .create-post-container {
           display: flex;
           justify-content: center;

@@ -41,8 +41,9 @@ export default function Home() {
               const allElements = splineViewer.shadowRoot?.querySelectorAll('*');
               if (allElements) {
                 allElements.forEach(element => {
+                  const classNameString = typeof element.className === 'string' ? element.className : '';
                   if (element.textContent?.includes('Spline') || 
-                      element.className?.includes('watermark') ||
+                      classNameString.includes('watermark') ||
                       element.id?.includes('watermark')) {
                     element.style.display = 'none';
                     element.style.visibility = 'hidden';
@@ -80,8 +81,9 @@ export default function Home() {
             const allElements = splineViewer.shadowRoot?.querySelectorAll('*');
             if (allElements) {
               allElements.forEach(element => {
+                const classNameString = typeof element.className === 'string' ? element.className : '';
                 if (element.textContent?.includes('Spline') || 
-                    element.className?.includes('watermark') ||
+                    classNameString.includes('watermark') ||
                     element.id?.includes('watermark')) {
                   element.style.display = 'none';
                   element.style.visibility = 'hidden';

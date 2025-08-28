@@ -1,185 +1,220 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
-import { getPost } from "../services/api";
-import { motion } from "framer-motion";
-import AuthContext from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import Post from '../models/Post.js';
+import User from '../models/userModel.js';
 
-document.documentElement.style.scrollBehavior = 'smooth';
-
-export default function PostDetail() {
-  const { id } = useParams();
-  const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [likeLoading, setLikeLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const { user, token } = useContext(AuthContext);
-  const userId = user?._id;
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        setLoading(true);
-        const cleanId = id.trim();
-        const res = await getPost(cleanId);
-        setPost(res.data);
-      } catch (err) {
-        console.error("Failed to fetch post:", err);
-        // You might want to show an error message to user
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchPost();
-    }
-  }, [id]);
-
-  const toggleLike = async () => {
-    // Check if user is authenticated
-    if (!user || !token) {
-      alert("Please log in to like posts");
-      return;
-    }
-
-    if (likeLoading) return; // Prevent multiple clicks
-
-    try {
-      setLikeLoading(true);
-      
-      // Make the API call
-      const response = await axios.post(
-        `/api/posts/${post._id}/like`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      // Update the post state with the response data
-      setPost(response.data);
-      
-    } catch (error) {
-      console.error("Error toggling like:", error);
-      
-      // Show user-friendly error message
-      if (error.response?.status === 401) {
-        alert("Please log in to like posts");
-      } else {
-        alert("Failed to update like. Please try again.");
-      }
-    } finally {
-      setLikeLoading(false);
-    }
-  };
-
-  // Delete Post
-  const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-    if (!confirmDelete) return;
-
-    try {
-      console.log("Deleting post with ID:", post._id);
-      const res = await axios.delete(`/api/posts/${post._id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log("Delete response:", res.data);
-      alert("✅ Post deleted successfully.");
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Failed to delete post:", err);
-      alert("❌ Failed to delete post.");
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-slate-900 text-white text-xl">
-        Loading post...
-      </div>
-    );
+// Get all posts
+export const getPosts = async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate('author', 'username email')
+      .sort({ createdAt: -1 });
+    
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ message: 'Error fetching posts' });
   }
+};
 
-  if (!post) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-slate-900 text-white text-xl">
-        Post not found
-      </div>
-    );
+// Get single post by ID
+export const getPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate('author', 'username email');
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    res.status(200).json(post);
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    res.status(500).json({ message: 'Error fetching post' });
   }
+};
 
-  // Check if current user has liked the post
-  const isLiked = post.likes && userId && post.likes.includes(userId);
+// Create new post
+export const createPost = async (req, res) => {
+  try {
+    const { title, content, image } = req.body;
+    
+    if (!title || !content) {
+      return res.status(400).json({ message: 'Title and content are required' });
+    }
+    
+    const newPost = new Post({
+      title,
+      content,
+      image,
+      author: req.user.id
+    });
+    
+    const savedPost = await newPost.save();
+    const populatedPost = await Post.findById(savedPost._id)
+      .populate('author', 'username email');
+    
+    res.status(201).json(populatedPost);
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ message: 'Error creating post' });
+  }
+};
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-12 text-white flex items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="bg-slate-700 bg-opacity-40 backdrop-blur-lg rounded-xl shadow-2xl p-8 max-w-3xl w-full"
-      >
-        <h1 className="text-4xl font-bold text-pink-400 mb-4 text-center">
-          {post.title}
-        </h1>
-        
-        {post.image && (
-          <img
-            src={post.image}
-            alt={post.title}
-            className="w-full rounded-lg shadow-md mb-6 object-cover max-h-[500px] transition duration-300 hover:scale-[1.01]"
-          />
-        )}
-        
-        <p className="text-lg text-slate-200 leading-relaxed text-center">
-          {post.content}
-        </p>
+// Update post
+export const updatePost = async (req, res) => {
+  try {
+    const { title, content, image } = req.body;
+    const postId = req.params.id;
+    
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    // Check if user is the author
+    if (post.author.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to update this post' });
+    }
+    
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { title, content, image },
+      { new: true }
+    ).populate('author', 'username email');
+    
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ message: 'Error updating post' });
+  }
+};
 
-        <div className="flex flex-col items-center mt-6 space-y-2">
-          <button
-            onClick={toggleLike}
-            disabled={likeLoading || !user}
-            className={`px-4 py-2 rounded-lg transition ${
-              likeLoading 
-                ? 'bg-gray-500 cursor-not-allowed' 
-                : 'bg-pink-500 hover:bg-pink-600'
-            } text-white ${!user ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {likeLoading ? (
-              "..."
-            ) : isLiked ? (
-              "❤️ Liked"
-            ) : (
-              "🤍 Like"
-            )}
-          </button>
-          
-          <p className="text-sm text-slate-300">
-            {post.likes?.length || 0} {(post.likes?.length || 0) === 1 ? "like" : "likes"}
-          </p>
-        </div>
+// Delete post
+export const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    // Check if user is the author
+    if (post.author.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to delete this post' });
+    }
+    
+    await Post.findByIdAndDelete(postId);
+    
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    res.status(500).json({ message: 'Error deleting post' });
+  }
+};
 
-        {userId === post.author && (
-          <div className="flex space-x-4 mt-4 justify-center">
-            <button
-              onClick={() => navigate(`/posts/${post._id}/edit`)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
-            >
-              ✏️ Edit Post
-            </button>
+// Like/Unlike post
+export const toggleLike = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user.id;
+    
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    const isLiked = post.likes.includes(userId);
+    
+    if (isLiked) {
+      // Unlike
+      post.likes = post.likes.filter(id => id.toString() !== userId);
+    } else {
+      // Like
+      post.likes.push(userId);
+    }
+    
+    await post.save();
+    
+    const updatedPost = await Post.findById(postId)
+      .populate('author', 'username email');
+    
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error('Error toggling like:', error);
+    res.status(500).json({ message: 'Error toggling like' });
+  }
+};
 
-            <button
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
-            >
-              🗑️ Delete Post
-            </button>
-          </div>
-        )}
-      </motion.div>
-    </div>
-  );
-}
+// Get user's posts
+export const getUserPosts = async (req, res) => {
+  try {
+    const userId = req.params.userId || req.user.id;
+    
+    const posts = await Post.find({ author: userId })
+      .populate('author', 'username email')
+      .sort({ createdAt: -1 });
+    
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+    res.status(500).json({ message: 'Error fetching user posts' });
+  }
+};
+
+// Toggle Save / Unsave post for current user
+export const toggleSavePost = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const postId = req.params.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const alreadySaved = user.saved.some((s) => s.toString() === postId);
+
+    if (alreadySaved) {
+      user.saved = user.saved.filter((s) => s.toString() !== postId);
+    } else {
+      user.saved.push(postId);
+    }
+
+    await user.save();
+
+    // Optionally return the saved array or the populated saved posts
+    const populated = await User.findById(userId).populate({
+      path: "saved",
+      populate: { path: "author", select: "username email" },
+    });
+
+    res.status(200).json({ saved: populated.saved });
+  } catch (error) {
+    console.error("Error toggling saved post:", error);
+    res.status(500).json({ message: "Error toggling saved post" });
+  }
+};
+
+// Get saved posts for current user
+export const getSavedPosts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate({
+      path: "saved",
+      populate: { path: "author", select: "username email" },
+      options: { sort: { createdAt: -1 } },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user.saved || []);
+  } catch (error) {
+    console.error("Error fetching saved posts:", error);
+    res.status(500).json({ message: "Error fetching saved posts" });
+  }
+};

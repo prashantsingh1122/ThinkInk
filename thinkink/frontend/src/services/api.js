@@ -99,13 +99,8 @@ export const getUserPosts = async () => {
       },
     });
 
-    if (!response.data) {
-      throw new Error("No data received from server");
-    }
-
-    const posts = response.data.success ? response.data.posts : [];
-    return posts;
-
+    // backend returns an array of posts directly
+    return response.data;
   } catch (error) {
     if (error.response) {
       console.error("Server responded with error:", error.response.data);
@@ -131,6 +126,8 @@ export const deletePost = async (postId) => {
   return response.data;
 };
 
+
+// ✅ Generate AI content
 export const generateAIContent = async (prompt) => {
   try {
     const token = localStorage.getItem("token");
@@ -157,5 +154,51 @@ export const generateAIContent = async (prompt) => {
     throw error;
   }
 };
-  
-  
+
+// ✅ Summarize post content
+export const generateSummary = async (postId) => {
+  try {
+    const token = localStorage.getItem("token");
+    const resp = await axios.post(
+      `${config.apiUrl}/ai/summarize`,
+      { postId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return resp.data; // { summary, cached, summaryAt }
+  } catch (err) {
+    console.error("Error generating summary:", err.response?.data || err.message);
+    throw err;
+  }
+};
+
+// Toggle save/unsave a post
+export const toggleSavePost = async (postId) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.post(
+    `${POSTS_BASE_URL}/${postId}/save`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data; // { saved: [ ...populated posts or ids ] }
+};
+
+// Get saved posts for current user
+export const getSavedPosts = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${POSTS_BASE_URL}/saved`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data; // array of posts
+};
+

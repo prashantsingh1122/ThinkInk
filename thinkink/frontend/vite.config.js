@@ -7,7 +7,13 @@ export default defineConfig({
     host: true,
     port: 5173,
     proxy: {
-      '/api': 'https://thinkink-backend.onrender.com',
+      '/api': {
+        target: process.env.NODE_ENV === 'production' 
+          ? 'https://thinkink-backend.onrender.com' 
+          : 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 })

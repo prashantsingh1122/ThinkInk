@@ -23,6 +23,15 @@ const PostSchema = new mongoose.Schema(
       ref: "user",
       required: true,
     },
+    summary: {
+      type :String,
+      default:null,
+    },
+    summaryAt:{
+      type :Date,
+      default:null,
+    },
+
     author: {
       type: mongoose.Schema.Types.ObjectId,   // ✅ Reference to the User model
       ref: "User",

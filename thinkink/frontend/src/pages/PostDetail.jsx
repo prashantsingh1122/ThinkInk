@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import { getPost } from "../services/api";
+import { getPost, toggleSavePost } from "../services/api"; // add toggleSavePost
 import { motion } from "framer-motion";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { generateSummary } from "../services/api";
 
 import axios from "axios";
 document.documentElement.style.scrollBehavior = 'smooth';
@@ -11,8 +12,10 @@ document.documentElement.style.scrollBehavior = 'smooth';
 export default function PostDetail() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const [summary, setSummary] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const navigate = useNavigate();
-
 
   const { user, token } = useContext(AuthContext);
   const userId = user?._id;
@@ -33,6 +36,14 @@ export default function PostDetail() {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (!post) return;
+    // determine saved status using user.saved (handle populated or ids)
+    const savedList = user?.saved || [];
+    const savedIds = savedList.map(s => (typeof s === 'object' ? s._id : s));
+    setIsSaved(savedIds.includes(String(post._id)));
+  }, [post, user]);
+
   const toggleLike = async () => {
     try {
       await axios.post(
@@ -49,6 +60,18 @@ export default function PostDetail() {
     }
   };
 
+  const handleSummarize = async () => {
+    try {
+      setLoading(true);
+      const res = await generateSummary(post._id);
+      setSummary(res.summary);
+    } catch (err) {
+      alert("Summarization failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!post) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-900 text-white text-xl">
@@ -56,6 +79,9 @@ export default function PostDetail() {
       </div>
     );
   }
+
+  // helper to get author id whether author is populated object or id string
+  const authorId = post?.author?._id || post?.author;
 
   // Delete Post
   const handleDelete = async () => {
@@ -69,12 +95,31 @@ export default function PostDetail() {
       });
       console.log("Delete response:", res.data);
       alert("✅ Post deleted successfully.");
-      navigate("/dashboard"); // redirect to home
+      navigate("/dashboard"); // redirect to dashboard
     } catch (err) {
       console.error("Failed to delete post:", err);
       alert("❌ Failed to delete post.");
     }
   };
+
+  const handleToggleSave = async () => {
+    if (!token) {
+      alert("Please login to save posts.");
+      return;
+    }
+    try {
+      const resp = await toggleSavePost(post._id);
+      // resp.saved is an array of posts (populated) or ids
+      const savedIds = (resp.saved || []).map(s => (s._id ? s._id : s));
+      setIsSaved(savedIds.includes(String(post._id)));
+      alert(isSaved ? "Removed from saved." : "Saved to your profile.");
+    } catch (err) {
+      console.error("Error toggling save:", err);
+      alert("Failed to save post.");
+    }
+  };
+
+  const isAuthor = String(userId) && String(userId) === String(authorId);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-12 text-white flex items-center justify-center">
@@ -94,22 +139,41 @@ export default function PostDetail() {
             className="w-full rounded-lg shadow-md mb-6 object-cover max-h-[500px] transition duration-300 hover:scale-[1.01]"
           />
         )}
-        <p className="text-lg text-slate-200 leading-relaxed text-center">
-          {post.content}
-        </p>
+        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        <div className="mt-6 space-x-2">
+          <button onClick={handleSummarize} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded">
+            {loading ? "Summarizing..." : "Auto-summarize"}
+          </button>
+
+          {token && (
+            <button
+              onClick={handleToggleSave}
+              className={`px-4 py-2 rounded ${isSaved ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-white'}`}
+            >
+              {isSaved ? '★ Saved' : '☆ Save'}
+            </button>
+          )}
+        </div>
+
+        {summary ? (
+          <div className="mt-6 p-4 bg-gray-800 text-white rounded">
+            <h3 className="font-semibold">Summary</h3>
+            <p>{summary}</p>
+          </div>
+        ) : null}
 
         <div className="flex flex-col items-center mt-6 space-y-2">
           <button
             onClick={toggleLike}
             className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition"
           >
-            {post.likes.includes(userId) ? "❤️ Liked" : "🤍 Like"}
+            {post.likes && post.likes.map(l => String(l)).includes(String(userId)) ? "❤️ Liked" : "🤍 Like"}
           </button>
           <p className="text-sm text-slate-300">
-            {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
+            {post.likes?.length || 0} {(post.likes?.length || 0) === 1 ? "like" : "likes"}
           </p>
         </div>
-        {userId === post.author && (
+        {isAuthor && (
           <div className="flex space-x-4 mt-4">
             <button
               onClick={() => navigate(`/posts/${post._id}/edit`)}
@@ -126,7 +190,6 @@ export default function PostDetail() {
             </button>
           </div>
         )}
-        
 
       </motion.div>
     </div>

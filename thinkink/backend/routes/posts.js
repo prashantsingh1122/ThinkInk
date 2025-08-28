@@ -5,7 +5,10 @@ import {
   getPost,
   updatePost,
   getUserPosts,
-  
+  toggleLike,
+  deletePost,
+  toggleSavePost,
+  getSavedPosts
 } from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
@@ -19,8 +22,11 @@ router.post("/", protect, upload.single("image"), createPost);
 // Get all posts
 router.get("/", getPosts);
 
-// Get user's posts (Protected) - Move this above the :id route
+// Get current user's posts (Protected)
 router.get("/me", protect, getUserPosts);
+
+// Get current user's saved posts (Protected) - must be before :id
+router.get("/saved", protect, getSavedPosts);
 
 // Get a single post by ID
 router.get("/:id", getPost);
@@ -29,8 +35,8 @@ router.get("/:id", getPost);
 router.put('/:id', protect, updatePost);
 
 router.post("/:id/comments", protect, async(req, res) => {
-  const{text}=req.body;
-  const post=await Post.findById(req.params.id);
+  const { text } = req.body;
+  const post = await Post.findById(req.params.id);
   if (!post) {
     return res.status(404).json({ message: "Post not found" });
   }
@@ -43,28 +49,13 @@ router.post("/:id/comments", protect, async(req, res) => {
   res.status(201).json({ message: "Comment added successfully" });
 });
 
-//LIke api
-router.post('/:id/like', protect, toggleLikePost);
+// Like api
+router.post('/:id/like', protect, toggleLike);
 
-
+// Toggle save/unsave a post (Protected)
+router.post("/:id/save", protect, toggleSavePost);
 
 // Delete a post (Protected)
-router.delete("/:id", protect, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
-
-    if (post.author.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    await post.deleteOne();
-    res.json({ message: "Post deleted" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
+router.delete("/:id", protect, deletePost);
 
 export default router;

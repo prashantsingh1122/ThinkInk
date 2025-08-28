@@ -22,7 +22,7 @@ export default function Dashboard() {
   }, []);
 
   const handleEdit = (postId) => {
-    navigate(`/edit/${postId}`); // redirect to edit page
+    navigate(`/posts/${postId}/edit`); // fixed route
   };
 
   const handleDelete = async (postId) => {
@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-4xl mx-auto mt-8">
-      <h1 className="text-3xl font-bold mb-4">🧠 Your Posts</h1>
+      <h1 className="text-3xl font-bold mb-4">🥰 Your Posts</h1>
       {posts.length === 0 ? (
         <p>No posts yet!</p>
       ) : (
@@ -51,7 +51,7 @@ export default function Dashboard() {
               <div>
                 <h2
                   className="text-xl font-semibold text-blue-600 cursor-pointer hover:underline block transition-all duration-300 hover:opacity-90"
-                  onClick={() => navigate(`/post/${post._id}`)}
+                  onClick={() => navigate(`/posts/${post._id}`)} // fixed route
                 >
                   {post.title}
                 </h2>

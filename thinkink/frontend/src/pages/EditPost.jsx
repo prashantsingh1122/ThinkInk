@@ -17,10 +17,14 @@ export default function PostEdit() {
       try {
         const res = await axios.get(`/api/posts/${id}`);
         const post = res.data;
-        if (post.author !== user._id) {
+
+        const authorId = post?.author?._id || post?.author;
+        if (String(authorId) !== String(user?._id)) {
           alert("You are not authorized to edit this post.");
           navigate("/");
+          return;
         }
+
         setTitle(post.title);
         setContent(post.content);
       } catch (err) {
