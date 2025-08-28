@@ -1,12 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import { getPost, toggleSavePost } from "../services/api"; // add toggleSavePost
+import { getPost, toggleLike as apiToggleLike, deletePost as apiDeletePost, generateSummary } from "../services/api";
 import { motion } from "framer-motion";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { generateSummary } from "../services/api";
 
-import axios from "axios";
 document.documentElement.style.scrollBehavior = 'smooth';
 
 export default function PostDetail() {
@@ -14,7 +12,6 @@ export default function PostDetail() {
   const [post, setPost] = useState(null);
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const navigate = useNavigate();
 
   const { user, token } = useContext(AuthContext);
@@ -36,23 +33,9 @@ export default function PostDetail() {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (!post) return;
-    // determine saved status using user.saved (handle populated or ids)
-    const savedList = user?.saved || [];
-    const savedIds = savedList.map(s => (typeof s === 'object' ? s._id : s));
-    setIsSaved(savedIds.includes(String(post._id)));
-  }, [post, user]);
-
   const toggleLike = async () => {
     try {
-      await axios.post(
-        `/api/posts/${post._id}/like`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await apiToggleLike(post._id);
       const updatedPost = await getPost(post._id);
       setPost(updatedPost.data);
     } catch (error) {
@@ -89,33 +72,12 @@ export default function PostDetail() {
     if (!confirmDelete) return;
 
     try {
-      console.log("Deleting post with ID:", post._id);
-      const res = await axios.delete(`/api/posts/${post._id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      console.log("Delete response:", res.data);
+      await apiDeletePost(post._id);
       alert("✅ Post deleted successfully.");
       navigate("/dashboard"); // redirect to dashboard
     } catch (err) {
       console.error("Failed to delete post:", err);
       alert("❌ Failed to delete post.");
-    }
-  };
-
-  const handleToggleSave = async () => {
-    if (!token) {
-      alert("Please login to save posts.");
-      return;
-    }
-    try {
-      const resp = await toggleSavePost(post._id);
-      // resp.saved is an array of posts (populated) or ids
-      const savedIds = (resp.saved || []).map(s => (s._id ? s._id : s));
-      setIsSaved(savedIds.includes(String(post._id)));
-      alert(isSaved ? "Removed from saved." : "Saved to your profile.");
-    } catch (err) {
-      console.error("Error toggling save:", err);
-      alert("Failed to save post.");
     }
   };
 
@@ -140,19 +102,10 @@ export default function PostDetail() {
           />
         )}
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
-        <div className="mt-6 space-x-2">
+        <div className="mt-6">
           <button onClick={handleSummarize} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded">
             {loading ? "Summarizing..." : "Auto-summarize"}
           </button>
-
-          {token && (
-            <button
-              onClick={handleToggleSave}
-              className={`px-4 py-2 rounded ${isSaved ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-white'}`}
-            >
-              {isSaved ? '★ Saved' : '☆ Save'}
-            </button>
-          )}
         </div>
 
         {summary ? (
@@ -190,7 +143,6 @@ export default function PostDetail() {
             </button>
           </div>
         )}
-
       </motion.div>
     </div>
   );

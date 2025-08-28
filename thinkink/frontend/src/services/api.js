@@ -191,14 +191,14 @@ export const toggleSavePost = async (postId) => {
   return response.data; // { saved: [ ...populated posts or ids ] }
 };
 
-// Get saved posts for current user
-export const getSavedPosts = async () => {
+// Toggle like/unlike a post
+export const toggleLike = async (postId) => {
   const token = localStorage.getItem("token");
-  const response = await axios.get(`${POSTS_BASE_URL}/saved`, {
+  const response = await axios.post(`${POSTS_BASE_URL}/${postId}/like`, {}, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data; // array of posts
+  return response.data;
 };
 
