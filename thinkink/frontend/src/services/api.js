@@ -115,6 +115,35 @@ export const getUserPosts = async () => {
   }
 };
 
+// ✅ Get saved posts for the current user
+export const getSavedPosts = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await axios.get(`${POSTS_BASE_URL}/saved`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Server responded with error:", error.response.data);
+      throw new Error(error.response.data.message || "Failed to fetch saved posts");
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+      throw new Error("No response from server");
+    } else {
+      console.error("Error setting up request:", error.message);
+      throw error;
+    }
+  }
+};
+
 // ✅ Delete a post by ID
 export const deletePost = async (postId) => {
   const token = localStorage.getItem("token");
