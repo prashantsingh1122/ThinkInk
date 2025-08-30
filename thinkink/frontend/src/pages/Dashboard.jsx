@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { getAllPosts } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -12,6 +12,14 @@ const Dashboard = () => {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // INFINITE SCROLL STATES - ADDED
+  const [displayedPosts, setDisplayedPosts] = useState([]);
+  const [postsToShow] = useState(5); // Number of posts to load each time
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,7 +42,56 @@ const Dashboard = () => {
       return titleMatch || authorMatch;
     });
     setFilteredPosts(filtered);
+    // RESET INFINITE SCROLL - ADDED
+    setCurrentIndex(0);
+    setDisplayedPosts([]);
+    setHasMore(true);
   }, [searchQuery, posts]);
+
+  // LOAD INITIAL POSTS AND MORE POSTS - ADDED
+  useEffect(() => {
+    if (filteredPosts.length > 0 && displayedPosts.length === 0) {
+      loadMorePosts();
+    }
+  }, [filteredPosts]);
+
+  const loadMorePosts = useCallback(() => {
+    if (isLoading || !hasMore) return;
+    
+    setIsLoading(true);
+    
+    // Simulate loading delay (remove this in production)
+    setTimeout(() => {
+      const postsToDisplay = filteredPosts.slice(1); // Skip featured post
+      const nextPosts = postsToDisplay.slice(currentIndex, currentIndex + postsToShow);
+      
+      if (nextPosts.length > 0) {
+        setDisplayedPosts(prev => [...prev, ...nextPosts]);
+        setCurrentIndex(prev => prev + postsToShow);
+        
+        // Check if there are more posts
+        if (currentIndex + postsToShow >= postsToDisplay.length) {
+          setHasMore(false);
+        }
+      } else {
+        setHasMore(false);
+      }
+      
+      setIsLoading(false);
+    }, 800); // Remove this delay in production
+  }, [filteredPosts, currentIndex, postsToShow, isLoading, hasMore]);
+
+  // INFINITE SCROLL DETECTION - ADDED
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
+        loadMorePosts();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadMorePosts]);
 
   const handleCreatePost = (e) => {
     if (!token) {
@@ -162,7 +219,7 @@ const Dashboard = () => {
           </motion.div>
         </motion.div>
 
-        {/* More Articles Section */}
+                                                {/* More Articles Section */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -173,21 +230,27 @@ const Dashboard = () => {
               {searchQuery ? 'Search Results' : 'More Articles'}
               <div className="h-1 w-16 bg-indigo-600 rounded-full ml-4 opacity-20" />
             </h2>
-            <Link 
-              to="/all-posts" 
-              className="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all duration-300 text-sm font-medium"
-            >
-              View All
-            </Link>
+            {/* UPDATED - Show count of displayed posts */}
+            
+            
+            {/*             <div className="flex items-center gap-4">
+                            <span className="text-sm text-gray-400">
+                            Showing {displayedPosts.length} of {Math.max(0, filteredPosts.length - 1)} articles
+                            </span>
+                            </div>    
+            */}
+
+
           </div>
           
+          {/* Articles Grid - UPDATED to use displayedPosts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {filteredPosts.slice(1).map((post, index) => (
+            {displayedPosts.map((post, index) => (
               <motion.div
                 key={post._id}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 * index }}
+                transition={{ delay: 0.1 * (index % 5) }} // Stagger animation for new posts
                 whileHover={{ y: -4 }}
               >
                 <Link
@@ -227,6 +290,54 @@ const Dashboard = () => {
               </motion.div>
             ))}
           </div>
+
+          {/* LOADING INDICATOR - ADDED */}
+          {isLoading && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center justify-center py-12"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-gray-400">Loading more posts...</span>
+              </div>
+            </motion.div>
+          )}
+
+          {/* END OF POSTS INDICATOR - ADDED */}
+          {!hasMore && displayedPosts.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">You've reached the end!</h3>
+              <p className="text-gray-400">No more articles to show</p>
+            </motion.div>
+          )}
+
+          {/* NO RESULTS MESSAGE - UPDATED */}
+          {displayedPosts.length === 0 && !isLoading && searchQuery && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">No articles found</h3>
+              <p className="text-gray-400">Try searching with different keywords</p>
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </motion.div>
