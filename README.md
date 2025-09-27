@@ -1,42 +1,63 @@
-# ThinkInk
+📝 ThinkInk – AI-Powered Blogging Platform
+📌 Overview
 
-Live demo: https://think-ink-jet.vercel.app/
+ThinkInk is a full-stack blogging platform that integrates AI to help users generate, summarize, and manage content. The platform also scrapes trending blogs from tech websites and provides a modern, responsive UI for content creators.
 
-ThinkInk is a full-stack blogging platform with AI-assisted content features, user authentication, likes, comments, saved/bookmarked posts, and a simple dashboard/profile UI.
+✨ Features
 
-Table of contents
-- Project summary
-- Features
-- Tech stack
-- Repository layout
-- Quick start (development)
-- Environment variables
-- Seed data
-- API reference
-- Frontend notes (Vite)
-- Docker & docker-compose
-- Deployment (Vercel) notes & common build issues
-- Troubleshooting
-- Contributing
-- License & contact
+🔐 Authentication & Authorization – JWT-based secure login and signup.
 
-## Project summary
-ThinkInk lets users create and manage blog posts, like and comment on posts, save/bookmark posts into their profile, and use AI-powered utilities (summaries / generation). The repo contains an Express + MongoDB backend (`thinkink/backend`) and a Vite + React frontend (`thinkink/frontend`).
+🤖 AI-Powered Content Generation – Integrated Google Gemini API for auto-summarization & content generation.
 
-## Features
-- User authentication (JWT)
-- CRUD posts with image upload (Cloudinary)
-- Like/unlike posts
-- Save/unsave (bookmarks) to user profile
-- Comments
-- AI summarization (Google Gemini integration) and utilities
-- Profile + dashboard with saved posts tab
-- Minimal, mobile-friendly UI with Framer Motion animations
+🖼️ Image Uploads – Cloudinary storage for user-uploaded media.
 
-## Tech stack
-- Backend: Node.js, Express, Mongoose (MongoDB)
-- Frontend: React, Vite, Tailwind CSS, Framer Motion
-- Images: Cloudinary
-- Optional: Redis (jobs/caching)
-- Dev/Deployment: Docker, docker-compose; frontend often deployed on Vercel
+📊 Trending Blogs Dashboard – Web scraping for the latest tech blogs.
 
+📝 CRUD Operations – Users can create, update, delete, and manage blogs.
+
+⚡ Responsive Design – Built with React.js + Tailwind for mobile-first UI.
+
+🌍 Deployment – Hosted on Vercel (frontend) and Render (backend).
+
+🛠️ Tech Stack
+
+Frontend: React.js, Tailwind CSS
+
+Backend: Node.js, Express.js
+
+Database: MongoDB
+
+AI: Google Gemini API
+
+Storage: Cloudinary
+
+Hosting: Vercel, Render
+
+🚀 Live Demo
+
+🔗 Live Application
+
+⚙️ Installation
+
+Clone the repo
+
+git clone https://github.com/prashantsingh1122/ThinkInk.git
+cd ThinkInk
+
+
+Install dependencies
+
+npm install
+
+
+Add environment variables in .env file
+
+MONGO_URI=your_mongodb_url
+JWT_SECRET=your_jwt_secret
+GEMINI_API_KEY=your_gemini_api_key
+CLOUDINARY_URL=your_cloudinary_url
+
+
+Start the development server
+
+npm run dev
