@@ -1,0 +1,46 @@
+services:
+  # Minimal backend + Mongo to learn the basics
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: thinkink-backend
+    # Load environment variables from backend/.env file
+    # This will use your existing MONGO_URI, JWT_SECRET, CLOUDINARY, etc.
+    env_file:
+      - ./backend/.env
+    environment:
+      # Override NODE_ENV for Docker (optional - can also be in .env)
+      - NODE_ENV=production
+      # You can override specific values here if needed, but by default
+      # all values from .env file will be used (MONGO_URI, JWT_SECRET, etc.)
+    ports:
+      - "5000:5000"
+    # Remove depends_on if not using Docker MongoDB (OPTION 4)
+    # depends_on:
+    #   - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: thinkink-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  # MongoDB service - COMMENTED OUT (using external MongoDB)
+  # Uncomment if you want to use Docker MongoDB instead of external MongoDB
+  # mongo:
+  #   image: mongo:6
+  #   container_name: thinkink-mongo
+  #   volumes:
+  #     - mongo_data:/data/db
+  #   ports:
+  #     - "27017:27017"
+
+# volumes:
+#   mongo_data:
+
+
