@@ -59,6 +59,11 @@ app.use("/api/posts",postRoutes); // Make sure this is correct
 //    THIS IS THE API ROUTE FOR WEB SCRAPNG
 app.use("/api/scrape",scrapeRooutes); // Use the scrape routes
 
+// Simple health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 
 // (-------startScrapeScheduler();-------)// Optionally start the scheduler automatically
 

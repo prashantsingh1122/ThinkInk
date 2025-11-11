@@ -2,7 +2,8 @@ import cron from 'node-cron';
 import BlogScraper from '../scripts/scrapers/fetchBlogs.js';
 
 const scheduled = new Map();
-const DEFAULT_SCHEDULE = '0 */6 * * *'; // every 6 hours
+// run at 00:00 UTC every 6 days (day-of-month 1,7,13,19,25,31)
+const DEFAULT_SCHEDULE = '0 0 */6 * *';
 
 export function startScrapeScheduler(schedule = DEFAULT_SCHEDULE, options = {}) {
   if (scheduled.has('scrape')) return;

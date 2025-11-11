@@ -20,6 +20,20 @@ router.get("/me", protect, async (req, res) => {
   }
 });
 
+// 🔹 POST alias for /me (same behavior as GET /me)
+router.post("/me", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("❌ Error fetching user:", error.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // 🔹 Signup Route
 router.post("/signup", async (req, res) => {
   try {
@@ -54,7 +68,10 @@ router.post("/signup", async (req, res) => {
 // 🔹 Login Route
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    // Normalize email to improve matching with legacy records
+    email = (email || "").trim().toLowerCase();
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required." });
@@ -65,13 +82,27 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Primary: bcrypt compare
+    let isMatch = await bcrypt.compare(password, user.password);
+
+    // Fallback for legacy plaintext-stored passwords (rehash on the fly)
+    if (!isMatch) {
+      const looksHashed = typeof user.password === 'string' && user.password.startsWith('$2');
+      if (!looksHashed && password === user.password) {
+        // Upgrade: rehash and save
+        const newHash = await bcrypt.hash(password, 10);
+        user.password = newHash;
+        await user.save();
+        isMatch = true;
+      }
+    }
+
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
     // ✅ Generate JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     res.json({ message: "Login successful", token });
   } catch (error) {
