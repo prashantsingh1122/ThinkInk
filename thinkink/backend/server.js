@@ -7,7 +7,7 @@ import connectDB from "./config/db.js"; // ✅ Ensure this is imported
 import postRoutes from "./routes/posts.js"; // ✅ Ensure this is imported
 import aiRoutes from "./routes/ai.js";
 import scrapeRooutes from "./routes/scrape.js"; // ✅ Import the new scrape routes
-//import { startScrapeScheduler } from "./jobs/scheduler.js";
+import { startScrapeScheduler } from "./jobs/scheduler.js";
 
 // Load environment variables - prioritize local env for development
 dotenv.config({ path: '.env.local' });
@@ -66,6 +66,11 @@ app.get('/api/health', (req, res) => {
 
 
 // (-------startScrapeScheduler();-------)// Optionally start the scheduler automatically
+// Start the scheduler when the server starts
+startScrapeScheduler('0 0 */6 * *', {
+  limit: 10,           // number of blogs to scrape per run
+  saveToDB: true       // save scraped blogs to MongoDB
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -84,5 +89,6 @@ mongoose
     app.listen(port, '0.0.0.0', () =>
       console.log(`🚀 Server running on port ${port}`)
     );
+     console.log('Blog scraper scheduler started (runs every 6 days)');
   })
   .catch((error) => console.error("❌ MongoDB Connection Error:", error));
