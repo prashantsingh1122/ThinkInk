@@ -48,56 +48,131 @@ export default function DemoPost() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 py-12">
+    <div className="min-h-screen bg-white text-black px-4 py-12 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8"
+        className="max-w-5xl mx-auto"
       >
-        <div className="mb-6">
-          <Link to="/demo" className="text-sm text-gray-600 hover:underline">
+        {/* Header with back link */}
+        <div className="mb-8 flex items-center gap-2">
+          <Link to="/demo" className="text-sm text-gray-600 hover:text-black transition-colors font-medium">
             ← Back to Posts
           </Link>
         </div>
 
-        <h1 className="text-3xl font-bold mb-4 text-black">{post.title}</h1>
-        <div className="flex items-center gap-3 text-sm text-gray-600 mb-6">
-          <div className="font-medium text-black">{post.author?.username || "Unknown"}</div>
-          <div>{new Date(post.createdAt).toLocaleDateString()}</div>
+        {/* Title Section */}
+        <div className="mb-8">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-6 text-black leading-tight">
+            {post.title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 border-b border-gray-200 pb-6">
+            <div>
+              <div className="font-medium text-black text-base">{post.author?.username || "Unknown"}</div>
+            </div>
+            <div className="text-gray-500">
+              {new Date(post.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </div>
+            <div className="text-gray-500 ml-auto">
+              ❤️ {post.likes?.length || 0} • 💬 {post.comments?.length || 0}
+            </div>
+          </div>
         </div>
 
+        {/* Featured Image */}
         {post.image && (
-          <img
-            src={post.image}
-            alt={post.title}
-            className="w-full rounded-md mb-6 object-cover max-h-[520px]"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-12 rounded-lg overflow-hidden shadow-lg"
+          >
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-auto object-cover max-h-96"
+            />
+          </motion.div>
         )}
 
-        {/* Properly spaced readable HTML content */}
+        {/* Main Content - wider with proper spacing */}
         <article
-          className="prose prose-lg max-w-none text-black leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          className="prose prose-xl max-w-none text-black text-lg leading-8 mb-12"
+          style={{
+            '--tw-prose-body': 'rgb(0, 0, 0)',
+            '--tw-prose-headings': 'rgb(0, 0, 0)',
+            '--tw-prose-bold': 'rgb(0, 0, 0)',
+            '--tw-prose-links': 'rgb(0, 0, 0)',
+          }}
+          dangerouslySetInnerHTML={{
+            __html: post.content?.replace(
+              /<p>/g,
+              '<p style="margin-bottom: 1.5rem; text-align: justify; line-height: 1.8;">'
+            ) || '<p>No content available</p>'
+          }}
         />
 
-        <div className="mt-6 flex items-center gap-4">
+        {/* Divider */}
+        <div className="my-12 border-t-2 border-gray-200"></div>
+
+        {/* Action Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-12"
+        >
           <button
             onClick={handleSummarize}
             disabled={loading}
-            className="px-4 py-2 bg-gray-900 text-white rounded"
+            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors font-medium disabled:opacity-50"
           >
-            {loading ? "Summarizing..." : "Auto-summarize"}
+            {loading ? "Summarizing..." : "✨ Auto-summarize"}
           </button>
-          <div className="text-sm text-gray-600">❤️ {post.likes?.length || 0} • 💬 {post.comments?.length || 0}</div>
-        </div>
+        </motion.div>
 
+        {/* Summary Section */}
         {summary && (
-          <div className="mt-6 p-4 bg-gray-50 rounded border">
-            <h3 className="font-semibold mb-2">Summary</h3>
-            <p className="text-gray-800">{summary}</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-gray-50 rounded-lg p-8 mb-12 border-l-4 border-black"
+          >
+            <h3 className="font-bold text-xl mb-4 text-black">📝 Summary</h3>
+            <p className="text-gray-800 text-base leading-8 text-justify">{summary}</p>
+          </motion.div>
         )}
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-black text-white rounded-lg p-8 text-center"
+        >
+          <h3 className="text-2xl font-bold mb-4">Want to create your own posts?</h3>
+          <p className="mb-6 text-gray-300">Join ThinkInk today and start sharing your thoughts with the community.</p>
+          <div className="flex gap-4 justify-center">
+            <Link
+              to="/signup"
+              className="px-6 py-3 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors font-medium"
+            >
+              Sign Up
+            </Link>
+            <Link
+              to="/login"
+              className="px-6 py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-black transition-colors font-medium"
+            >
+              Sign In
+            </Link>
+          </div>
+        </motion.div>
       </motion.div>
     </div>
   );
