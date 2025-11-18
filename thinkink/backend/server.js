@@ -18,11 +18,23 @@ connectDB();
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
 
-// Configure CORS for specific frontend URL (Vercel URL)
+// Configure CORS for frontend URLs (allow override via env)
+const envAllowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean)
+  : [];
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://think-ink-jet.vercel.app'
 ];
+
+envAllowedOrigins.forEach(origin => {
+  if (!allowedOrigins.includes(origin)) {
+    allowedOrigins.push(origin);
+  }
+});
+
+console.log('CORS allowed origins:', allowedOrigins);
 
 app.use(cors({
   origin: function (origin, callback) {
