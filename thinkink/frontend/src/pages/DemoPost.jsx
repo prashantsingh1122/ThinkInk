@@ -57,7 +57,7 @@ export default function DemoPost() {
       >
         <div className="mb-6">
           <Link to="/demo" className="text-sm text-gray-600 hover:underline">
-            ← Back to Demo
+            ← Back to Posts
           </Link>
         </div>
 
