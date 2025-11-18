@@ -137,7 +137,7 @@ export default function Demo() {
                       </div>
                     </div>
                     <Link
-                      to={`/posts/${post._id}`}
+                      to={`/demo/posts/${post._id}`}
                       className="text-black font-medium hover:underline"
                     >
                       Read →

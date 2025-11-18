@@ -18,6 +18,8 @@ const CreatePost = React.lazy(() => import("./components/CreatePost"));
 const PostDetail = React.lazy(() => import("./pages/PostDetail"));
 const EditPost = React.lazy(() => import("./pages/EditPost"));
 const Profile = React.lazy(() => import("./pages/Profile"));
+const Demo = React.lazy(() => import("./pages/Demo"));
+const DemoPost = React.lazy(() => import("./pages/DemoPost"));
 const ProtectedRoute = React.lazy(() => import("./components/ProtectedRoute"));
 
 const Layout = ({ children }) => {
@@ -48,6 +50,8 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/blog/:id" element={<Blog />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/demo/posts/:id" element={<DemoPost />} />
 
                 {/* Protected Routes */}
                 <Route

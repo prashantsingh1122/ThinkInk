@@ -24,7 +24,7 @@ export default function Home() {
             splineViewer.style.height = '100%';
             splineViewer.style.background = 'transparent';
             splineRef.current.appendChild(splineViewer);
-            
+
             // Hide "Built with Spline" watermark
             setTimeout(() => {
               const watermark = splineViewer.shadowRoot?.querySelector('.spline-watermark');
@@ -36,15 +36,15 @@ export default function Home() {
                 watermark.style.left = '-9999px';
                 watermark.style.top = '-9999px';
               }
-              
+
               // Also try to hide any other potential watermark elements
               const allElements = splineViewer.shadowRoot?.querySelectorAll('*');
               if (allElements) {
                 allElements.forEach(element => {
                   const classNameString = typeof element.className === 'string' ? element.className : '';
-                  if (element.textContent?.includes('Spline') || 
-                      classNameString.includes('watermark') ||
-                      element.id?.includes('watermark')) {
+                  if (element.textContent?.includes('Spline') ||
+                    classNameString.includes('watermark') ||
+                    element.id?.includes('watermark')) {
                     element.style.display = 'none';
                     element.style.visibility = 'hidden';
                     element.style.opacity = '0';
@@ -64,7 +64,7 @@ export default function Home() {
           splineViewer.style.height = '100%';
           splineViewer.style.background = 'transparent';
           splineRef.current.appendChild(splineViewer);
-          
+
           // Hide "Built with Spline" watermark
           setTimeout(() => {
             const watermark = splineViewer.shadowRoot?.querySelector('.spline-watermark');
@@ -76,15 +76,15 @@ export default function Home() {
               watermark.style.left = '-9999px';
               watermark.style.top = '-9999px';
             }
-            
+
             // Also try to hide any other potential watermark elements
             const allElements = splineViewer.shadowRoot?.querySelectorAll('*');
             if (allElements) {
               allElements.forEach(element => {
                 const classNameString = typeof element.className === 'string' ? element.className : '';
-                if (element.textContent?.includes('Spline') || 
-                    classNameString.includes('watermark') ||
-                    element.id?.includes('watermark')) {
+                if (element.textContent?.includes('Spline') ||
+                  classNameString.includes('watermark') ||
+                  element.id?.includes('watermark')) {
                   element.style.display = 'none';
                   element.style.visibility = 'hidden';
                   element.style.opacity = '0';
@@ -196,13 +196,22 @@ export default function Home() {
                   Sign In
                 </motion.button>
               </Link>
+              <Link to="/demo">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-3 bg-gray-700 text-white rounded-full font-medium hover:bg-gray-600 transition-colors border border-gray-500"
+                >
+                  Visit Demo
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
       {/* 3D Model Section */}
-      <section className="py-20 px-4 bg-gray-800">
+      < section className="py-20 px-4 bg-gray-800" >
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -226,10 +235,10 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
       {/* Features Section */}
-      <section className="py-20 px-4">
+      < section className="py-20 px-4" >
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -259,12 +268,12 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
 
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gray-800">
+      < section className="py-20 px-4 bg-gray-800" >
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -289,10 +298,10 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
       {/* Footer */}
-      <footer className="py-10 px-4 bg-gray-900 border-t border-gray-800">
+      < footer className="py-10 px-4 bg-gray-900 border-t border-gray-800" >
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2">
             <FaRocket className="text-indigo-400" />
@@ -305,7 +314,7 @@ export default function Home() {
             <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact Us</Link>
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 }
