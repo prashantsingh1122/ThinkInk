@@ -180,6 +180,20 @@ export const generateAIContent = async (prompt) => {
     return response.data.content;
   } catch (error) {
     console.error('Error generating AI content:', error);
+    
+    // Extract user-friendly error message from response
+    if (error.response?.data?.userMessage) {
+      const userError = new Error(error.response.data.userMessage);
+      userError.status = error.response.status;
+      throw userError;
+    }
+    
+    if (error.response?.data?.error || error.response?.data?.details) {
+      const userError = new Error(error.response.data.userMessage || error.response.data.details || error.response.data.error);
+      userError.status = error.response.status;
+      throw userError;
+    }
+    
     throw error;
   }
 };
@@ -201,6 +215,20 @@ export const generateSummary = async (postId) => {
     return resp.data; // { summary, cached, summaryAt }
   } catch (err) {
     console.error("Error generating summary:", err.response?.data || err.message);
+    
+    // Extract user-friendly error message from response
+    if (err.response?.data?.userMessage) {
+      const userError = new Error(err.response.data.userMessage);
+      userError.status = err.response.status;
+      throw userError;
+    }
+    
+    if (err.response?.data?.error || err.response?.data?.message) {
+      const userError = new Error(err.response.data.userMessage || err.response.data.message || err.response.data.error);
+      userError.status = err.response.status;
+      throw userError;
+    }
+    
     throw err;
   }
 };

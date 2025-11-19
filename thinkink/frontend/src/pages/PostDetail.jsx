@@ -49,7 +49,8 @@ export default function PostDetail() {
       const res = await generateSummary(post._id);
       setSummary(res.summary);
     } catch (err) {
-      alert("Summarization failed");
+      const errorMessage = err?.message || err?.response?.data?.userMessage || err?.response?.data?.details || "Summarization failed. Please try again.";
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
