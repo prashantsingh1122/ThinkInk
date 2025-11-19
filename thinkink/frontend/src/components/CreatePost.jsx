@@ -103,7 +103,8 @@ const CreatePost = () => {
       setContent(''); // Clear the content state
     } catch (err) {
       console.error("AI Error:", err);
-      alert("❌ AI failed to generate content.");
+      const errorMessage = err?.message || err?.response?.data?.userMessage || err?.response?.data?.details || "AI failed to generate content. Please try again.";
+      alert(errorMessage);
     } finally {
       setAiLoading(false);
     }
