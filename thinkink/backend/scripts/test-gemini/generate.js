@@ -11,8 +11,8 @@ import gemini from '../../utils/geminiClient.js';
   }
 
   try {
-    // Use same model and call pattern as your route — gemini-pro for free tier
-    const model = gemini.getGenerativeModel?.({ model: 'gemini-pro' });
+    // Use same model and call pattern as your route
+    const model = gemini.getGenerativeModel?.({ model: 'gemini-1.5-flash' }) || gemini.getGenerativeModel?.({ model: 'gemini-pro' });
     if (!model) {
       console.error('This SDK build lacks getGenerativeModel(); check SDK version.');
       process.exit(3);

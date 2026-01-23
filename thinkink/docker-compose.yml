@@ -12,7 +12,6 @@ services:
     environment:
       # Override NODE_ENV for Docker (optional - can also be in .env)
       - NODE_ENV=production
-
       # You can override specific values here if needed, but by default
       # all values from .env file will be used (MONGO_URI, JWT_SECRET, etc.)
     ports:
