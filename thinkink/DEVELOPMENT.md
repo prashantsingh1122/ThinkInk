@@ -57,6 +57,10 @@ Make sure your backend has the necessary environment variables:
 - `CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name
 - `CLOUDINARY_API_KEY` - Cloudinary API key
 - `CLOUDINARY_API_SECRET` - Cloudinary API secret
+- `REDIS_URL` or `REDISCLOUD_URL` (optional) - Redis connection string for caching
+  - Get free Redis from [Upstash](https://upstash.com) (256MB free) or [Redis Cloud](https://redis.com/cloud/) (30MB free)
+  - Format: `redis://default:password@host:port`
+  - If not provided, app will work without caching (slower but functional)
 
 ## Development vs Production
 
