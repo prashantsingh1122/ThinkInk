@@ -8,12 +8,19 @@ import postRoutes from "./routes/posts.js"; // ✅ Ensure this is imported
 import aiRoutes from "./routes/ai.js";
 import scrapeRooutes from "./routes/scrape.js"; // ✅ Import the new scrape routes
 import { startScrapeScheduler } from "./jobs/scheduler.js";
+import { initRedis } from "./utils/redis.js"; // 🔥 Import Redis initialization
 
 // Load environment variables - prioritize local env for development
 dotenv.config({ path: '.env.local' });
 dotenv.config(); // Fallback to .env
 
 connectDB();
+
+// 🔥 Initialize Redis connection (optional - app works without it)
+initRedis().catch(err => {
+  console.error('Redis initialization error:', err);
+  // Don't block app startup if Redis fails
+});
 
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing
@@ -93,8 +100,13 @@ app.use((err, req, res, next) => {
 // ✅ Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log("✅ Connected to MongoDB");
+
+    // 🔥 Ensure Redis is initialized (in case MongoDB connects first)
+    await initRedis().catch(() => {
+      // Redis initialization already handled above, just ensure it's attempted here too
+    });
 
     // Use dynamic port binding for Render (0.0.0.0 for cloud environments)
     const port = process.env.PORT || 5000;
