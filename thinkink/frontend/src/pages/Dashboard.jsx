@@ -25,7 +25,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const data = await getAllPosts({ limit: 20 });
+        const data = await getAllPosts();
         setPosts(data);
         setFilteredPosts(data);
       } catch (error) {

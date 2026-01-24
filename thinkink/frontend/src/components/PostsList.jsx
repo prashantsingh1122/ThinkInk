@@ -10,7 +10,7 @@ const PostsList = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const data = await getAllPosts({ limit: 20 });
+        const data = await getAllPosts();
         setPosts(data);
       } catch (error) {
         console.error("Error fetching posts:", error);
