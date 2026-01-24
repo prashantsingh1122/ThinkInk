@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://dev.to/zenulabidin/how-to-escape-airship-escape-rooms-using-html-css-and-javascript-3o2f",
+    "title": "Loading...",
+    "source": "Manual",
+    "category": "custom",
+    "content": "Content unavailable",
+    "author": "Unknown",
+    "tags": [],
+    "featuredImage": null,
+    "wordCount": 0,
+    "scrapedAt": "2026-01-24T06:52:18.989Z",
+    "status": "failed",
+    "error": "Request failed with status code 404"
+  },
+  {
+    "url": "https://techcrunch.com/2024/12/10/openai-gpt-5/",
+    "title": "Loading...",
+    "source": "Manual",
+    "category": "custom",
+    "content": "Content unavailable",
+    "author": "Unknown",
+    "tags": [],
+    "featuredImage": null,
+    "wordCount": 0,
+    "scrapedAt": "2026-01-24T06:52:25.419Z",
+    "status": "failed",
+    "error": "Request failed with status code 404"
+  }
+]

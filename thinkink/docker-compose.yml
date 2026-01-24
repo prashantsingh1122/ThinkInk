@@ -6,14 +6,12 @@ services:
       dockerfile: Dockerfile
     container_name: thinkink-backend
     # Load environment variables from backend/.env file
-    # This will use your existing MONGO_URI, JWT_SECRET, CLOUDINARY, etc.
+    # This will use your existing MONGO_URI, JWT_SECRET, CLOUDINARY, REDIS_URL, etc.
     env_file:
       - ./backend/.env
     environment:
-      # Override NODE_ENV for Docker (optional - can also be in .env)
       - NODE_ENV=production
-      # You can override specific values here if needed, but by default
-      # all values from .env file will be used (MONGO_URI, JWT_SECRET, etc.)
+      # REDIS_URL from .env is used as-is (Upstash/Redis Cloud). No Redis container needed.
     ports:
       - "5000:5000"
     # Remove depends_on if not using Docker MongoDB (OPTION 4)
@@ -31,7 +29,6 @@ services:
       - backend
 
   # MongoDB service - COMMENTED OUT (using external MongoDB)
-  # Uncomment if you want to use Docker MongoDB instead of external MongoDB
   # mongo:
   #   image: mongo:6
   #   container_name: thinkink-mongo
@@ -39,6 +36,16 @@ services:
   #     - mongo_data:/data/db
   #   ports:
   #     - "27017:27017"
+
+  # Redis - OPTIONAL: only if you want Redis inside Docker (e.g. local dev without Upstash).
+  # If using Upstash/Redis Cloud, leave this commented and set REDIS_URL in .env.
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: thinkink-redis
+  #   ports:
+  #     - "6379:6379"
+  # Then in backend environment, set: REDIS_URL=redis://redis:6379
+  # (or pass via .env when using local Redis; override REDIS_URL for Docker)
 
 # volumes:
 #   mongo_data:

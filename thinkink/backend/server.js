@@ -8,12 +8,16 @@ import postRoutes from "./routes/posts.js"; // ✅ Ensure this is imported
 import aiRoutes from "./routes/ai.js";
 import scrapeRooutes from "./routes/scrape.js"; // ✅ Import the new scrape routes
 import { startScrapeScheduler } from "./jobs/scheduler.js";
+import { initRedis } from "./utils/redis.js";
 
 // Load environment variables - prioritize local env for development
 dotenv.config({ path: '.env.local' });
 dotenv.config(); // Fallback to .env
 
 connectDB();
+
+// Initialize Redis (used by scrape routes for caching). Non-blocking; app works without it.
+initRedis().catch((err) => console.error('Redis init error:', err));
 
 const app = express();
 app.use(express.json()); // ✅ Enable JSON parsing

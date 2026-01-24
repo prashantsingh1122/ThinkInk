@@ -12,7 +12,8 @@ import {
 } from "../controllers/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
-import Post from "../models/Post.js"; 
+import Post from "../models/Post.js";
+import { cacheDelete, isRedisAvailable } from "../utils/redis.js"; 
 
 const router = express.Router();
 
@@ -46,6 +47,7 @@ router.post("/:id/comments", protect, async(req, res) => {
   };
   post.comments.push(comment);
   await post.save();
+  if (isRedisAvailable()) await cacheDelete(`posts:item:${req.params.id}`);
   res.status(201).json({ message: "Comment added successfully" });
 });
 
