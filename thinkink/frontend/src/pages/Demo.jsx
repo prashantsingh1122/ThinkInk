@@ -14,7 +14,7 @@ export default function Demo() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const data = await getAllPosts();
+        const data = await getAllPosts({ limit: 20 });
         setPosts(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching posts:", error);

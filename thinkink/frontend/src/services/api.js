@@ -53,9 +53,11 @@ export const createPost = async (formData) => {
   }
 };
 
-//✅ Get all blog posts
-export const getAllPosts = async () => {
-  const response = await axios.get(POSTS_BASE_URL);
+//✅ Get all blog posts. Use limit=20 for faster cached feed; omit for full list.
+export const getAllPosts = async (opts = {}) => {
+  const { limit } = opts;
+  const url = limit != null ? `${POSTS_BASE_URL}?limit=${limit}` : POSTS_BASE_URL;
+  const response = await axios.get(url);
   return response.data;
 };
 
