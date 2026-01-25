@@ -1,7 +1,7 @@
 📝 ThinkInk – AI-Powered Blogging Platform
 📌 Overview
 
-ThinkInk is a full-stack blogging platform that integrates AI to help users generate, summarize, and manage content. The platform also scrapes trending blogs from tech websites and provides a modern, responsive UI for content creators.
+ThinkInk is a backend-heavy content aggregation platform that scrapes blogs, generates AI summaries, caches trending posts, and serves paginated feeds efficiently.
 
 ✨ Features
 
