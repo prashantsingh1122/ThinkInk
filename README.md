@@ -98,5 +98,89 @@ The backend services are containerized using Docker to ensure:
 - Easy local setup  
 - Clear service isolation  
 
-```bash
 docker compose up --build
+
+
+🔐 Environment Configuration
+
+#All sensitive configuration is managed using environment variables:
+
+DB_URL
+REDIS_URL
+GEMINI_API_KEY
+PORT
+
+
+Environment validation is enforced at application startup to prevent misconfiguration.
+
+📦 Tech Stack
+
+Backend
+
+Node.js
+
+Express.js
+
+Redis
+
+MongoDB
+
+Gemini API
+
+Infrastructure
+
+Docker
+
+Docker Compose
+
+Frontend
+
+React (Demo / Public Views)
+
+📊 Performance & Optimization
+
+Redis cache reduces repeated database queries
+
+Pagination limits response payload size
+
+Cached trending content improves feed load times
+
+AI calls minimized through stored summaries
+
+🔍 Project Focus
+
+This project intentionally emphasizes:
+
+Backend scalability concepts
+
+Caching and performance optimization
+
+System design thinking
+
+Production-style architecture
+
+UI is kept minimal to prioritize backend correctness and efficiency.
+
+📄 Documentation
+
+SECURITY.md — Security policies
+
+Redis caching strategy documentation (in progress)
+
+Inline comments for critical backend logic
+
+📌 Future Improvements
+
+Background job queue for scraping and AI processing
+
+API rate limiting
+
+Structured logging and metrics
+
+Expanded unit test coverage
+
+🧑‍💻 Author
+
+Prashant Singh
+Backend-Focused Full Stack Developer
+GitHub: https://github.com/prashantsingh1122
