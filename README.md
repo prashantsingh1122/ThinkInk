@@ -1,63 +1,102 @@
-📝 ThinkInk – AI-Powered Blogging Platform
-📌 Overview
+# ThinkInk — Backend-Driven Content Aggregation Platform
 
-ThinkInk is a backend-heavy content aggregation platform that scrapes blogs, generates AI summaries, caches trending posts, and serves paginated feeds efficiently.
+ThinkInk is a backend-focused content aggregation system that automatically scrapes blogs, generates AI-powered summaries, caches trending content using Redis, and serves paginated feeds efficiently through a scalable API architecture.
 
-✨ Features
+The project is designed to demonstrate real-world backend engineering practices such as caching strategies, pagination, containerization, and system trade-offs — not just feature implementation.
 
-🔐 Authentication & Authorization – JWT-based secure login and signup.
+---
 
-🤖 AI-Powered Content Generation – Integrated Google Gemini API for auto-summarization & content generation.
+## 🚀 Core Features
 
-🖼️ Image Uploads – Cloudinary storage for user-uploaded media.
+- Automated blog scraping to populate content feeds  
+- AI-generated summaries using Gemini API  
+- Redis caching for trending and latest posts  
+- Paginated API responses for scalable feed delivery  
+- Dockerized backend services  
+- Public demo feed for unauthenticated users  
+- Secure environment-based configuration  
+- Modular backend architecture  
 
-📊 Trending Blogs Dashboard – Web scraping for the latest tech blogs.
+---
 
-📝 CRUD Operations – Users can create, update, delete, and manage blogs.
+## 🧱 System Architecture
 
-⚡ Responsive Design – Built with React.js + Tailwind for mobile-first UI.
+┌────────────┐
+│ Blog Sites │
+└─────┬──────┘
+↓
+┌───────────────┐
+│ Scraper Layer │
+└─────┬─────────┘
+↓
+┌───────────────┐
+│ Database │ ← Source of Truth
+└─────┬─────────┘
+↓
+┌───────────────┐
+│ Redis Cache │ ← Hot / Trending Data
+└─────┬─────────┘
+↓
+┌───────────────┐
+│ API Layer │
+└─────┬─────────┘
+↓
+┌───────────────┐
+│ Frontend UI │
+└───────────────┘
 
-🌍 Deployment – Hosted on Vercel (frontend) and Render (backend).
+---
 
-🛠️ Tech Stack
+## 🧠 Key Engineering Decisions
 
-Frontend: React.js, Tailwind CSS
+### 1️⃣ Redis for Hot Data Caching
+Redis is used to cache:
+- Trending posts  
+- Latest posts  
+- Frequently accessed feed data  
 
-Backend: Node.js, Express.js
+This reduces repeated database reads and improves response times for high-traffic endpoints.
 
-Database: MongoDB
+**Cache Strategy**
+- Read-through caching  
+- TTL-based expiration  
+- Database fallback on cache miss  
 
-AI: Google Gemini API
+---
 
-Storage: Cloudinary
+### 2️⃣ Pagination for Scalable Feed Delivery
+All feed endpoints are paginated with a default limit of 20 items per request.
 
-Hosting: Vercel, Render
+This prevents:
+- Overfetching  
+- Large response payloads  
+- Memory pressure on the server  
 
-🚀 Live Demo
+---
 
-🔗 Live Application
+### 3️⃣ Decoupled Scraping and Feed Serving
+Scraping is handled independently from feed delivery.
 
-⚙️ Installation
+This ensures:
+- Feed availability even if scraping fails  
+- Better fault isolation  
+- Predictable API performance  
 
-Clone the repo
+---
 
-git clone https://github.com/prashantsingh1122/ThinkInk.git
-cd ThinkInk
+### 4️⃣ AI Summary Generation
+Blog content is summarized using the Gemini API.
 
+Summaries are generated once and stored, avoiding repeated AI calls for the same content.
 
-Install dependencies
+---
 
-npm install
+## 🐳 Dockerized Setup
 
+The backend services are containerized using Docker to ensure:
+- Consistent development and deployment environments  
+- Easy local setup  
+- Clear service isolation  
 
-Add environment variables in .env file
-
-MONGO_URI=your_mongodb_url
-JWT_SECRET=your_jwt_secret
-GEMINI_API_KEY=your_gemini_api_key
-CLOUDINARY_URL=your_cloudinary_url
-
-
-Start the development server
-
-npm run dev
+```bash
+docker compose up --build
