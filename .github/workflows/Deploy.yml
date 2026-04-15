@@ -1,0 +1,31 @@
+name: Deploy to AWS EC2
+
+# Trigger: runs automatically when you push to main branch
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # GitHub spins up a fresh Ubuntu machine
+
+
+    steps:
+      # Step 1: Download your repo code onto GitHub's machine
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: SSH into your EC2 and run deploy commands
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}  # Your EC2 public IP or DNS
+          username: ubuntu  # e.g., 'ubuntu' for Amazon Linux
+          key: ${{ secrets.EC2_SSH_KEY }}  # Your private SSH key (add to GitHub Secrets)
+          script: |
+            cd ~ThinkInk/thinkink
+            git pull origin main     
+            docker-compose down
+            docker-compose up -d
+            echo "😌😌 Deployed Successfully!"
