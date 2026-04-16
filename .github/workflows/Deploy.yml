@@ -24,8 +24,9 @@ jobs:
           username: ubuntu  # e.g., 'ubuntu' for Amazon Linux
           key: ${{ secrets.EC2_SSH_KEY }}  # Your private SSH key (add to GitHub Secrets)
           script: |
-            cd ~ThinkInk/thinkink
+            cd ~ThinkInk
             git pull origin main     
+            cd thinkink
             docker-compose down
             docker-compose up -d
             echo "😌😌 Deployed Successfully!"
