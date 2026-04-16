@@ -18,12 +18,12 @@ services:
     # depends_on:
     #   - mongo
 
-    logging:
-      driver: awslogs                       # Send backend logs to Cloudwatch
+    logging:                          # ← ADD THIS
+      driver: awslogs                 # send logs to CloudWatch
       options:
-        awslogs-region: ap-south-1
-        awslogs-group: thinkink-Logs
-        awslogs-stream: backend_Logs
+        awslogs-region: ap-south-1    # Mumbai region
+        awslogs-group: thinkink-logs  # log group name
+        awslogs-stream: backend       # stream name
 
   frontend:
     build:
@@ -36,12 +36,12 @@ services:
       - backend
 
 # Send Frontend logs to Cloudwatch
-    logging:
+    logging:                         
       driver: awslogs
       options:
         awslogs-region: ap-south-1
-        awslogs-group: thinkink-Logs
-        awslogs-stream: frontend_Logs
+        awslogs-group: thinkink-logs
+        awslogs-stream: frontend
 
   # MongoDB service - COMMENTED OUT (using external MongoDB)
   # mongo:
